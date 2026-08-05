@@ -17,6 +17,13 @@ export const OWNER_NAV: NavItem[] = [
   { key: 'accounts', label: 'Accounts', path: '/accounts', icon: 'Users', ownerOnly: true },
   { key: 'billing', label: 'Billing', path: '/billing', icon: 'CurrencyDollar', ownerOnly: true },
   { key: 'invoices', label: 'Invoices', path: '/invoices', icon: 'Receipt', ownerOnly: true },
+  {
+    key: 'support',
+    label: 'Dashboard Support',
+    path: '/support',
+    icon: 'Lifebuoy',
+    ownerOnly: true,
+  },
 ]
 
 /** @deprecated use CLIENT_NAV */

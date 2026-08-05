@@ -94,6 +94,12 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/InvoicesView.vue'),
         meta: { module: 'invoices' as ModuleKey, title: 'Invoices', owner: true },
       },
+      {
+        path: 'support',
+        name: 'DashboardSupport',
+        component: () => import('@/views/SupportView.vue'),
+        meta: { module: 'support' as ModuleKey, title: 'Dashboard Support', owner: true },
+      },
     ],
   },
   {

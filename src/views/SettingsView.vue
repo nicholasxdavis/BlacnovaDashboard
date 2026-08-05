@@ -359,8 +359,8 @@ async function confirmSignOut() {
   align-items: flex-start;
   gap: 10px;
   padding: 12px 14px;
-  background: #f3f8f4;
-  border: 1px solid #d5e5d8;
+  background: $bn-orange-soft;
+  border: 1px solid $bn-orange-border;
   border-radius: $bn-radius;
   color: $bn-gray-700;
   font-size: 13px;

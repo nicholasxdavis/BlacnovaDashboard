@@ -37,9 +37,9 @@ const label = computed(() => {
 }
 
 .page-status--published {
-  color: #2f6b3a;
-  background: #f3f8f4;
-  border-color: #d5e5d8;
+  color: $bn-orange;
+  background: $bn-orange-soft;
+  border-color: $bn-orange-border;
 }
 
 .page-status--draft {

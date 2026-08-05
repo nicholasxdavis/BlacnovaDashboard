@@ -69,9 +69,9 @@ const dot = computed(() => props.status === 'new')
 }
 
 .status-badge--ok {
-  color: #2f6b3a;
-  background: #f3f8f4;
-  border-color: #d5e5d8;
+  color: $bn-orange;
+  background: $bn-orange-soft;
+  border-color: $bn-orange-border;
 }
 
 .status-badge--neutral {

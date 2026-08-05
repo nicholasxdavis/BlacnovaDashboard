@@ -8,6 +8,13 @@
   --el-color-primary-light-8: #f6d8c3;
   --el-color-primary-light-9: #{$bn-orange-soft};
   --el-color-primary-dark-2: #{$bn-orange-hover};
+  --el-color-success: #{$bn-orange};
+  --el-color-success-light-3: #e0834f;
+  --el-color-success-light-5: #e9a57a;
+  --el-color-success-light-7: #f2c7a8;
+  --el-color-success-light-8: #f6d8c3;
+  --el-color-success-light-9: #{$bn-orange-soft};
+  --el-color-success-dark-2: #{$bn-orange-hover};
   --el-border-radius-base: #{$bn-radius-sm};
   --el-border-color: #{$bn-gray-200};
   --el-border-color-light: #{$bn-gray-200};
@@ -105,19 +112,28 @@
 
 .el-table {
   --el-table-border-color: #{$bn-gray-200};
-  --el-table-header-bg-color: #{$bn-white};
+  --el-table-header-bg-color: #{$bn-black};
   --el-table-row-hover-bg-color: #{$bn-gray-50};
-  --el-table-header-text-color: #{$bn-gray-500};
+  --el-table-header-text-color: rgba(255, 255, 255, 0.82);
   font-size: 13.5px;
   font-family: $bn-font;
 }
 
 .el-table th.el-table__cell {
   font-weight: 500;
-  color: $bn-gray-500;
+  color: rgba(255, 255, 255, 0.82) !important;
+  background: $bn-black !important;
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.03em;
+  border-bottom-color: $bn-black !important;
+}
+
+.el-table thead.is-group th.el-table__cell,
+.el-table__header-wrapper th.el-table__cell,
+.el-table__fixed-header-wrapper th.el-table__cell {
+  background: $bn-black !important;
+  color: rgba(255, 255, 255, 0.82) !important;
 }
 
 .el-table td.el-table__cell,
@@ -190,10 +206,22 @@
   font-weight: 500;
 }
 
+.el-tag--success {
+  --el-tag-bg-color: #{$bn-orange-soft};
+  --el-tag-border-color: #{$bn-orange-border};
+  --el-tag-text-color: #{$bn-orange};
+}
+
 .el-tag--info {
   --el-tag-bg-color: #{$bn-gray-100};
   --el-tag-border-color: #{$bn-gray-200};
   --el-tag-text-color: #{$bn-gray-700};
+}
+
+.el-message--success {
+  --el-message-bg-color: #{$bn-orange-soft};
+  --el-message-border-color: #{$bn-orange-border};
+  --el-message-text-color: #{$bn-orange-active};
 }
 
 .el-pagination {

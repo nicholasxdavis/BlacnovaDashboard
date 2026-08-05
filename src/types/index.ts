@@ -11,6 +11,7 @@ export type ModuleKey =
   | 'accounts'
   | 'billing'
   | 'invoices'
+  | 'support'
 
 export type UserRole = 'platform' | 'owner' | 'manager'
 
