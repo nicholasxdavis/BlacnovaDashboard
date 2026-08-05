@@ -1,0 +1,212 @@
+import type {
+  AnalyticsPoint,
+  ContentBlock,
+  MaintenanceConfig,
+  MediaItem,
+  Submission,
+  WebsitePage,
+} from '@/types'
+
+export const contentBlocks: ContentBlock[] = [
+  {
+    id: 'c1',
+    pageId: 'home',
+    pageName: 'Home',
+    section: 'Hero',
+    label: 'Headline',
+    type: 'heading',
+    value: 'Gentle dentistry for your whole family',
+    published: true,
+  },
+  {
+    id: 'c2',
+    pageId: 'home',
+    pageName: 'Home',
+    section: 'Hero',
+    label: 'Supporting text',
+    type: 'textarea',
+    value:
+      'We provide calm, modern dental care with clear communication and flexible scheduling.',
+    published: true,
+  },
+  {
+    id: 'c3',
+    pageId: 'home',
+    pageName: 'Home',
+    section: 'Hero',
+    label: 'Primary call to action',
+    type: 'text',
+    value: 'Book an appointment',
+    published: true,
+  },
+  {
+    id: 'c4',
+    pageId: 'services',
+    pageName: 'Services',
+    section: 'Intro',
+    label: 'Section title',
+    type: 'heading',
+    value: 'Care tailored to your needs',
+    published: true,
+  },
+  {
+    id: 'c5',
+    pageId: 'services',
+    pageName: 'Services',
+    section: 'Intro',
+    label: 'Description',
+    type: 'textarea',
+    value:
+      'From routine cleanings to restorative care, our team focuses on comfort and lasting results.',
+    published: false,
+  },
+  {
+    id: 'c6',
+    pageId: 'contact',
+    pageName: 'Contact',
+    section: 'Header',
+    label: 'Page title',
+    type: 'heading',
+    value: 'Get in touch',
+    published: true,
+  },
+]
+
+export const mediaItems: MediaItem[] = [
+  {
+    id: 'm1',
+    name: 'hero-office.jpg',
+    type: 'image',
+    size: '1.4 MB',
+    updatedAt: '2026-07-28',
+    usedOn: 'Home · Hero',
+    url: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=400&h=280&fit=crop',
+  },
+  {
+    id: 'm2',
+    name: 'team-portrait.jpg',
+    type: 'image',
+    size: '980 KB',
+    updatedAt: '2026-07-12',
+    usedOn: 'About · Team',
+    url: 'https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=400&h=280&fit=crop',
+  },
+  {
+    id: 'm3',
+    name: 'treatment-room.jpg',
+    type: 'image',
+    size: '1.1 MB',
+    updatedAt: '2026-06-30',
+    usedOn: 'Services · Gallery',
+    url: 'https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=400&h=280&fit=crop',
+  },
+  {
+    id: 'm4',
+    name: 'welcome-packet.pdf',
+    type: 'document',
+    size: '420 KB',
+    updatedAt: '2026-06-02',
+    usedOn: 'Resources',
+    url: '',
+  },
+]
+
+export const websitePages: WebsitePage[] = [
+  { id: 'home', title: 'Home', slug: '/', status: 'published', updatedAt: '2026-08-01' },
+  {
+    id: 'services',
+    title: 'Services',
+    slug: '/services',
+    status: 'published',
+    updatedAt: '2026-07-22',
+  },
+  { id: 'about', title: 'About', slug: '/about', status: 'published', updatedAt: '2026-07-10' },
+  {
+    id: 'contact',
+    title: 'Contact',
+    slug: '/contact',
+    status: 'published',
+    updatedAt: '2026-07-18',
+  },
+  {
+    id: 'new-patients',
+    title: 'New Patients',
+    slug: '/new-patients',
+    status: 'draft',
+    updatedAt: '2026-08-03',
+  },
+]
+
+export const maintenanceConfig: MaintenanceConfig = {
+  enabled: false,
+  title: 'We’ll be right back',
+  message:
+    'Our website is temporarily unavailable while we make a few improvements. Please check back soon or call the office if you need assistance.',
+  expectedReturn: '2026-08-06 09:00',
+}
+
+export const submissions: Submission[] = [
+  {
+    id: 's1',
+    name: 'Maya Chen',
+    email: 'maya.chen@email.com',
+    phone: '(555) 214-8890',
+    subject: 'New patient appointment',
+    message: 'Hi, I’d like to schedule a cleaning and exam for next week if possible.',
+    source: 'Contact form',
+    status: 'new',
+    createdAt: '2026-08-05T09:14:00',
+  },
+  {
+    id: 's2',
+    name: 'Jordan Ellis',
+    email: 'j.ellis@email.com',
+    phone: '(555) 902-4412',
+    subject: 'Insurance question',
+    message: 'Do you accept Delta Dental PPO? Looking to transfer my records.',
+    source: 'Contact form',
+    status: 'in_progress',
+    createdAt: '2026-08-04T16:42:00',
+    notes: 'Confirmed PPO acceptance. Waiting on records request form.',
+  },
+  {
+    id: 's3',
+    name: 'Priya Nair',
+    email: 'priya.n@email.com',
+    subject: 'Whitening consult',
+    message: 'Interested in professional whitening options and pricing.',
+    source: 'Services inquiry',
+    status: 'read',
+    createdAt: '2026-08-03T11:05:00',
+  },
+  {
+    id: 's4',
+    name: 'Sam Ortiz',
+    email: 'sam.ortiz@email.com',
+    phone: '(555) 331-7788',
+    subject: 'Emergency toothache',
+    message: 'Having sharp pain on lower left. Any openings today?',
+    source: 'Contact form',
+    status: 'resolved',
+    createdAt: '2026-08-02T08:20:00',
+    notes: 'Same-day visit scheduled. Pain managed.',
+  },
+  {
+    id: 's5',
+    name: 'Alex Rivera',
+    email: 'a.rivera@email.com',
+    subject: 'Office hours',
+    message: 'Are you open on Saturdays?',
+    source: 'Contact form',
+    status: 'archived',
+    createdAt: '2026-07-28T14:55:00',
+  },
+]
+
+export const analyticsSeries: AnalyticsPoint[] = [
+  { date: '2026-07-06', visitors: 412, pageviews: 980, submissions: 3 },
+  { date: '2026-07-13', visitors: 455, pageviews: 1042, submissions: 5 },
+  { date: '2026-07-20', visitors: 438, pageviews: 1011, submissions: 4 },
+  { date: '2026-07-27', visitors: 501, pageviews: 1188, submissions: 7 },
+  { date: '2026-08-03', visitors: 526, pageviews: 1240, submissions: 6 },
+]

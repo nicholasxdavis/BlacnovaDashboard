@@ -1,0 +1,38 @@
+// Blacnova light-theme tokens (~80% of brand system, kept light + accessible)
+$bn-orange: #d4611c;
+$bn-orange-soft: #fff4ed;
+$bn-orange-border: #f0d0bc;
+$bn-orange-hover: #b85318;
+$bn-orange-active: #a34a15;
+
+$bn-black: #000000;
+$bn-gray-900: #1a1a1a;
+$bn-gray-700: #484848;
+$bn-gray-500: #6b7280; // readable muted on light (brand tertiary adapted)
+$bn-gray-400: #9ca3af;
+$bn-gray-300: #d1d5db;
+$bn-gray-200: #e5e7eb;
+$bn-gray-100: #f3f4f6;
+$bn-gray-50: #f9fafb;
+$bn-white: #ffffff;
+
+$bn-radius: 8px;
+$bn-radius-sm: 6px;
+$bn-radius-pill: 9999px;
+$bn-border: 1px solid $bn-gray-200;
+$bn-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.06);
+
+$bn-space-1: 4.5px;
+$bn-space-2: 6.75px;
+$bn-space-3: 9px;
+$bn-space-4: 13.5px;
+$bn-space-5: 15px;
+$bn-space-6: 15.75px;
+$bn-space-7: 18px;
+$bn-space-8: 22.5px;
+
+$bn-sidebar-width: 240px;
+$bn-header-height: 56px;
+$bn-content-max: 1200px;
+$bn-font: Poppins, sans-serif;
+$bn-motion-fast: 200ms;
