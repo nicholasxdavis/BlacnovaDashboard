@@ -19,7 +19,7 @@ const label = computed(() => {
     read: 'Read',
     in_progress: 'In progress',
     resolved: 'Resolved',
-    archived: 'Archived',
+    archived: 'Disregarded',
   }
   return map[props.status]
 })

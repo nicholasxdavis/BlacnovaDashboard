@@ -22,7 +22,7 @@
           <el-option label="Read" value="read" />
           <el-option label="In progress" value="in_progress" />
           <el-option label="Resolved" value="resolved" />
-          <el-option label="Archived" value="archived" />
+          <el-option label="Disregarded" value="archived" />
         </el-select>
       </div>
       <div class="table-toolbar__right">
@@ -35,10 +35,10 @@
         :data="paged"
         v-loading="loading"
         empty-text="No support tickets yet"
-        style="width: 100%; min-width: 780px"
+        style="width: 100%"
         @row-click="openDetail"
       >
-        <el-table-column label="From" min-width="180">
+        <el-table-column label="From" min-width="150">
           <template #default="{ row }">
             <div class="contact">
               <span v-if="row.status === 'new'" class="unread-dot" aria-label="Unread" />
@@ -50,28 +50,28 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="Website" min-width="160" show-overflow-tooltip>
+        <el-table-column label="Website" width="160" show-overflow-tooltip>
           <template #default="{ row }">
             <div>{{ row.websiteName }}</div>
             <div class="muted">{{ row.websiteDomain }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="topic" label="Topic" min-width="140" show-overflow-tooltip>
+        <el-table-column prop="topic" label="Topic" width="140" show-overflow-tooltip>
           <template #default="{ row }">
             {{ topicLabel(row.topic) }}
           </template>
         </el-table-column>
-        <el-table-column label="Status" width="130">
+        <el-table-column label="Status" width="118">
           <template #default="{ row }">
             <StatusBadge :status="row.status" />
           </template>
         </el-table-column>
-        <el-table-column label="Received" width="130">
+        <el-table-column label="Received" width="150">
           <template #default="{ row }">
             {{ formatDate(row.createdAt) }}
           </template>
         </el-table-column>
-        <el-table-column label="" width="72" align="right">
+        <el-table-column label="" width="64" align="right">
           <template #default="{ row }">
             <el-button size="small" text @click.stop="openDetail(row)">Open</el-button>
           </template>
@@ -125,7 +125,7 @@
               <el-option label="Read" value="read" />
               <el-option label="In progress" value="in_progress" />
               <el-option label="Resolved" value="resolved" />
-              <el-option label="Archived" value="archived" />
+              <el-option label="Disregarded" value="archived" />
             </el-select>
           </div>
 
@@ -141,6 +141,13 @@
             />
             <div class="btn-row">
               <el-button type="primary" :loading="saving" @click="saveNotes">Save notes</el-button>
+              <el-button
+                v-if="active.status !== 'archived'"
+                :loading="saving"
+                @click="disregard"
+              >
+                Disregard
+              </el-button>
             </div>
           </div>
         </div>
@@ -268,6 +275,23 @@ async function saveStatus() {
   }
 }
 
+async function disregard() {
+  if (!active.value) return
+  saving.value = true
+  try {
+    await api.patch(`/v1/admin/support/${active.value.id}`, { status: 'archived' })
+    const row = tickets.value.find((t) => t.id === active.value!.id)
+    if (row) row.status = 'archived'
+    active.value.status = 'archived'
+    drawerOpen.value = false
+    ElMessage.success('Ticket disregarded')
+  } catch {
+    ElMessage.error('Could not disregard ticket')
+  } finally {
+    saving.value = false
+  }
+}
+
 async function saveNotes() {
   if (!active.value) return
   saving.value = true
@@ -372,6 +396,9 @@ onMounted(load)
 
 .btn-row {
   margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 @media (max-width: 560px) {

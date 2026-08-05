@@ -23,20 +23,20 @@
 
     <div class="surface">
       <div class="table-scroll">
-        <el-table :data="filtered" empty-text="No pages match your filters" style="min-width: 640px">
-          <el-table-column prop="title" label="Page" min-width="180">
+        <el-table :data="filtered" empty-text="No pages match your filters" style="width: 100%">
+          <el-table-column prop="title" label="Page" min-width="160">
             <template #default="{ row }">
               <div class="page-title">{{ row.title }}</div>
               <div class="page-slug">{{ row.slug }}</div>
             </template>
           </el-table-column>
-          <el-table-column prop="status" label="Status" width="140">
+          <el-table-column prop="status" label="Status" width="120">
             <template #default="{ row }">
               <PageStatus :status="row.status" />
             </template>
           </el-table-column>
-          <el-table-column prop="updatedAt" label="Updated" width="130" />
-          <el-table-column label="" width="220" align="right">
+          <el-table-column prop="updatedAt" label="Updated" width="120" />
+          <el-table-column label="" width="200" align="right">
             <template #default="{ row }">
               <el-button size="small" text @click="goContent(row.title)">Edit content</el-button>
               <el-dropdown trigger="click" @command="(cmd: string) => onStatus(row.id, cmd)">

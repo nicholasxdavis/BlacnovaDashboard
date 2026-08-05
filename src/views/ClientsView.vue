@@ -10,16 +10,16 @@
     </PageHeader>
 
     <div class="surface table-scroll">
-      <el-table :data="clients" v-loading="loading" empty-text="No clients yet" class="clients-table">
-        <el-table-column prop="name" label="Client" min-width="180" show-overflow-tooltip />
-        <el-table-column prop="domain" label="Domain" min-width="200" show-overflow-tooltip>
+      <el-table :data="clients" v-loading="loading" empty-text="No clients yet" class="clients-table" style="width: 100%">
+        <el-table-column prop="name" label="Client" min-width="150" show-overflow-tooltip />
+        <el-table-column prop="domain" label="Domain" width="180" show-overflow-tooltip>
           <template #default="{ row }">
             <a :href="'https://' + row.domain" target="_blank" rel="noopener noreferrer">
               {{ row.domain }}
             </a>
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="Status" min-width="150">
+        <el-table-column prop="status" label="Status" width="140">
           <template #default="{ row }">
             <el-select
               :model-value="row.status"
@@ -33,9 +33,9 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column prop="accountCount" label="Accounts" min-width="110" align="center" />
-        <el-table-column prop="newSubmissions" label="New leads" min-width="120" align="center" />
-        <el-table-column label="" min-width="100" align="right" fixed="right">
+        <el-table-column prop="accountCount" label="Accounts" width="96" align="center" />
+        <el-table-column prop="newSubmissions" label="New leads" width="100" align="center" />
+        <el-table-column label="" width="88" align="right" fixed="right">
           <template #default="{ row }">
             <el-button text type="danger" @click="removeClient(row)">Delete</el-button>
           </template>

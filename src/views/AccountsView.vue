@@ -10,17 +10,17 @@
     </PageHeader>
 
     <div class="surface table-scroll">
-      <el-table :data="accounts" v-loading="loading" empty-text="No accounts yet">
-        <el-table-column prop="name" label="Name" min-width="140" />
-        <el-table-column prop="email" label="Email" min-width="200" />
-        <el-table-column label="Website" min-width="160">
+      <el-table :data="accounts" v-loading="loading" empty-text="No accounts yet" style="width: 100%">
+        <el-table-column prop="name" label="Name" min-width="120" />
+        <el-table-column prop="email" label="Email" width="200" show-overflow-tooltip />
+        <el-table-column label="Website" width="150" show-overflow-tooltip>
           <template #default="{ row }">
             <div>{{ row.websiteName || '—' }}</div>
             <div class="muted">{{ row.websiteDomain }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="role" label="Role" width="110" />
-        <el-table-column label="Status" width="110">
+        <el-table-column prop="role" label="Role" width="100" />
+        <el-table-column label="Status" width="100">
           <template #default="{ row }">
             <span :class="row.active ? 'status-dot status-dot--ok' : 'status-dot status-dot--off'">
               {{ row.active ? 'Active' : 'Off' }}

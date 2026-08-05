@@ -36,7 +36,7 @@
           <el-option label="Read" value="read" />
           <el-option label="In progress" value="in_progress" />
           <el-option label="Resolved" value="resolved" />
-          <el-option label="Archived" value="archived" />
+          <el-option label="Disregarded" value="archived" />
         </el-select>
       </div>
       <div class="table-toolbar__right">
@@ -54,10 +54,10 @@
         <el-table
           :data="paged"
           empty-text="No submissions match your filters"
-          style="width: 100%; min-width: 720px"
+          style="width: 100%"
           @row-click="openDetail"
         >
-          <el-table-column label="Contact" min-width="200">
+          <el-table-column label="Contact" min-width="160">
             <template #default="{ row }">
               <div class="contact">
                 <span v-if="row.status === 'new'" class="unread-dot" aria-label="Unread" />
@@ -69,19 +69,19 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="subject" label="Subject" min-width="180" show-overflow-tooltip />
-          <el-table-column prop="source" label="Source" min-width="140" show-overflow-tooltip />
-          <el-table-column label="Status" width="130">
+          <el-table-column prop="subject" label="Subject" width="150" show-overflow-tooltip />
+          <el-table-column prop="source" label="Source" width="120" show-overflow-tooltip />
+          <el-table-column label="Status" width="118">
             <template #default="{ row }">
               <StatusBadge :status="row.status" />
             </template>
           </el-table-column>
-          <el-table-column label="Received" width="130">
+          <el-table-column label="Received" width="112">
             <template #default="{ row }">
               {{ formatDate(row.createdAt) }}
             </template>
           </el-table-column>
-          <el-table-column label="" width="72" align="right">
+          <el-table-column label="" width="64" align="right">
             <template #default="{ row }">
               <el-button size="small" text @click.stop="openDetail(row)">Open</el-button>
             </template>
@@ -167,7 +167,7 @@
               <el-option label="Read" value="read" />
               <el-option label="In progress" value="in_progress" />
               <el-option label="Resolved" value="resolved" />
-              <el-option label="Archived" value="archived" />
+              <el-option label="Disregarded" value="archived" />
             </el-select>
           </div>
 
@@ -207,6 +207,13 @@
             />
             <div class="detail__actions">
               <el-button type="primary" size="small" @click="saveNotes">Save notes</el-button>
+              <el-button
+                v-if="active.status !== 'archived'"
+                size="small"
+                @click="disregard"
+              >
+                Disregard
+              </el-button>
             </div>
           </div>
         </div>
@@ -307,6 +314,18 @@ async function updateStatus(status: SubmissionStatus) {
     ElMessage.success('Status updated')
   } catch {
     ElMessage.error('Could not update status')
+  }
+}
+
+async function disregard() {
+  if (!active.value) return
+  try {
+    await websiteStore.setSubmissionStatus(active.value.id, 'archived')
+    active.value = { ...active.value, status: 'archived' }
+    drawerOpen.value = false
+    ElMessage.success('Submission disregarded')
+  } catch {
+    ElMessage.error('Could not disregard submission')
   }
 }
 
@@ -472,6 +491,9 @@ async function copyText(value: string) {
 
 .detail__actions {
   margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .card-list {
