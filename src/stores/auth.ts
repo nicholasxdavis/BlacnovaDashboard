@@ -14,7 +14,6 @@ export interface AuthUser {
 export interface AuthPreferences {
   submissions: boolean
   maintenance: boolean
-  weeklyEmail: boolean
 }
 
 function isPlatformRole(user: AuthUser | null): boolean {
@@ -29,8 +28,8 @@ export const useAuthStore = defineStore('auth', () => {
   const preferences = ref<AuthPreferences>({
     submissions: true,
     maintenance: true,
-    weeklyEmail: false,
   })
+  const supportEmail = ref('nic@blacnova.net')
   const website = ref<ClientWebsite | null>(null)
   const bootstrapped = ref(false)
   const loading = ref(false)
@@ -51,6 +50,7 @@ export const useAuthStore = defineStore('auth', () => {
     token?: string
     user: AuthUser
     preferences?: AuthPreferences
+    supportEmail?: string
     website: ClientWebsite & { githubRepo?: string | null }
   }) {
     if (payload.token) {
@@ -61,7 +61,13 @@ export const useAuthStore = defineStore('auth', () => {
       ...payload.user,
       isPlatform: isPlatformRole(payload.user),
     }
-    if (payload.preferences) preferences.value = payload.preferences
+    if (payload.preferences) {
+      preferences.value = {
+        submissions: payload.preferences.submissions,
+        maintenance: payload.preferences.maintenance,
+      }
+    }
+    if (payload.supportEmail) supportEmail.value = payload.supportEmail
     website.value = {
       id: payload.website.id,
       name: payload.website.name,
@@ -115,7 +121,10 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function savePreferences(next: AuthPreferences) {
     const { data } = await api.put('/v1/preferences', next)
-    preferences.value = data.preferences
+    preferences.value = {
+      submissions: data.preferences.submissions,
+      maintenance: data.preferences.maintenance,
+    }
   }
 
   async function sendSupport(topic: string, message: string) {
@@ -126,6 +135,7 @@ export const useAuthStore = defineStore('auth', () => {
     token,
     user,
     preferences,
+    supportEmail,
     website,
     bootstrapped,
     loading,

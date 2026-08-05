@@ -79,13 +79,6 @@
             </div>
             <el-switch v-model="prefs.maintenance" @change="savePrefs" />
           </label>
-          <label class="pref-row">
-            <div>
-              <div class="pref-title">Weekly summary email</div>
-              <div class="pref-hint">Receive a short weekly recap of traffic and inquiries</div>
-            </div>
-            <el-switch v-model="prefs.weeklyEmail" @change="savePrefs" />
-          </label>
         </div>
       </div>
 
@@ -97,7 +90,7 @@
         <div class="info-list" style="margin-bottom: 16px">
           <div class="info-row">
             <span class="info-label">Email</span>
-            <a href="mailto:support@blacnova.dev">support@blacnova.dev</a>
+            <a :href="'mailto:' + auth.supportEmail">{{ auth.supportEmail }}</a>
           </div>
           <div class="info-row">
             <span class="info-label">Hours</span>
@@ -108,8 +101,7 @@
         <div v-if="ticketSent" class="ticket-success">
           <PhCheckCircle :size="18" weight="fill" />
           <div>
-            <strong>Message sent.</strong>
-            We'll get back to you at your account email.
+            Message sent. We'll get back to you at your account email.
           </div>
         </div>
 
@@ -184,13 +176,11 @@ const websiteStore = useWebsiteStore()
 const prefs = reactive({
   submissions: true,
   maintenance: true,
-  weeklyEmail: false,
 })
 
 onMounted(() => {
   prefs.submissions = auth.preferences.submissions
   prefs.maintenance = auth.preferences.maintenance
-  prefs.weeklyEmail = auth.preferences.weeklyEmail
 })
 
 const ticket = reactive({
