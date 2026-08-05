@@ -10,6 +10,7 @@ export type ModuleKey =
   | 'clients'
   | 'accounts'
   | 'billing'
+  | 'invoices'
 
 export type UserRole = 'platform' | 'owner' | 'manager'
 
@@ -140,4 +141,44 @@ export interface BillingOverview {
     arrivalDate: string
     createdAt: string
   }>
+}
+
+export interface DashboardInvoice {
+  id: string
+  websiteId: string | null
+  websiteName?: string | null
+  websiteDomain?: string | null
+  customerEmail: string
+  customerName: string
+  amountCents: number
+  currency: string
+  formatted?: string
+  description: string
+  status: string
+  hostedInvoiceUrl: string | null
+  invoicePdf: string | null
+  recurringId: string | null
+  daysUntilDue: number
+  sentAt: string | null
+  error: string | null
+  createdAt: string
+}
+
+export interface RecurringInvoice {
+  id: string
+  websiteId: string | null
+  websiteName: string | null
+  websiteDomain: string | null
+  customerEmail: string
+  customerName: string
+  amountCents: number
+  currency: string
+  formatted: string
+  description: string
+  dayOfMonth: number
+  daysUntilDue: number
+  active: boolean
+  lastSentOn: string | null
+  createdAt: string
+  updatedAt: string
 }
