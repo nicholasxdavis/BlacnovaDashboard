@@ -7,12 +7,18 @@ export type ModuleKey =
   | 'submissions'
   | 'analytics'
   | 'settings'
+  | 'clients'
+  | 'accounts'
+  | 'billing'
+
+export type UserRole = 'platform' | 'owner' | 'manager'
 
 export interface NavItem {
   key: ModuleKey
   label: string
   path: string
   icon: string
+  ownerOnly?: boolean
 }
 
 export interface ClientWebsite {
@@ -79,4 +85,59 @@ export interface AnalyticsPoint {
   visitors: number
   pageviews: number
   submissions: number
+}
+
+export interface AdminClient {
+  id: string
+  name: string
+  domain: string
+  status: string
+  modules: string[]
+  githubRepo: string | null
+  accountCount: number
+  newSubmissions: number
+  createdAt: string
+  updatedAt: string
+}
+
+export interface AdminAccount {
+  id: string
+  email: string
+  name: string
+  role: string
+  websiteId: string
+  websiteName: string | null
+  websiteDomain: string | null
+  active: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export interface BillingCharge {
+  id: string
+  amount: number
+  currency: string
+  formatted: string
+  status: string
+  paid: boolean
+  description: string
+  customer: string
+  createdAt: string
+}
+
+export interface BillingOverview {
+  balance: {
+    available: { amount: number; currency: string; formatted: string }
+    pending: { amount: number; currency: string; formatted: string }
+  }
+  charges: BillingCharge[]
+  payouts: Array<{
+    id: string
+    amount: number
+    currency: string
+    formatted: string
+    status: string
+    arrivalDate: string
+    createdAt: string
+  }>
 }

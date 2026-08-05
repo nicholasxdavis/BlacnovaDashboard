@@ -30,23 +30,29 @@
     </div>
 
     <nav class="sidebar__nav" aria-label="Main">
-      <router-link
-        v-for="item in clientStore.navItems"
-        :key="item.key"
-        :to="item.path"
-        class="nav-item"
-        :title="showLabels ? undefined : item.label"
-        @click="clientStore.setMobileNav(false)"
-      >
-        <component :is="iconMap[item.icon]" :size="20" weight="regular" class="nav-item__icon" />
-        <span v-show="showLabels" class="nav-item__label">{{ item.label }}</span>
-        <span
-          v-if="item.key === 'submissions' && websiteStore.newSubmissionCount && showLabels"
-          class="nav-item__badge"
+      <template v-for="(item, index) in clientStore.navItems" :key="item.key">
+        <div
+          v-if="item.ownerOnly && (index === 0 || !clientStore.navItems[index - 1]?.ownerOnly)"
+          class="nav-divider"
         >
-          {{ websiteStore.newSubmissionCount }}
-        </span>
-      </router-link>
+          <span v-show="showLabels">Blacnova admin</span>
+        </div>
+        <router-link
+          :to="item.path"
+          class="nav-item"
+          :title="showLabels ? undefined : item.label"
+          @click="clientStore.setMobileNav(false)"
+        >
+          <component :is="iconMap[item.icon]" :size="20" weight="regular" class="nav-item__icon" />
+          <span v-show="showLabels" class="nav-item__label">{{ item.label }}</span>
+          <span
+            v-if="item.key === 'submissions' && websiteStore.newSubmissionCount && showLabels"
+            class="nav-item__badge"
+          >
+            {{ websiteStore.newSubmissionCount }}
+          </span>
+        </router-link>
+      </template>
     </nav>
 
     <div v-show="showLabels" class="sidebar__site">
@@ -69,6 +75,9 @@ import {
   PhChartLine,
   PhGearSix,
   PhX,
+  PhBuildings,
+  PhUsers,
+  PhCurrencyDollar,
 } from '@phosphor-icons/vue'
 import { useClientStore } from '@/stores/client'
 import { useWebsiteStore } from '@/stores/website'
@@ -94,6 +103,9 @@ const iconMap: Record<string, object> = {
   EnvelopeSimple: PhEnvelopeSimple,
   ChartLine: PhChartLine,
   GearSix: PhGearSix,
+  Buildings: PhBuildings,
+  Users: PhUsers,
+  CurrencyDollar: PhCurrencyDollar,
 }
 </script>
 
@@ -179,6 +191,17 @@ const iconMap: Record<string, object> = {
   padding: 14px 10px;
   flex: 1;
   overflow-y: auto;
+}
+
+.nav-divider {
+  margin: 12px 8px 6px;
+  padding-top: 10px;
+  border-top: $bn-border;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: $bn-gray-400;
 }
 
 .nav-item {

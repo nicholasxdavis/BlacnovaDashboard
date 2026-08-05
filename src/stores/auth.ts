@@ -8,12 +8,19 @@ export interface AuthUser {
   email: string
   name: string
   role: string
+  isPlatform?: boolean
 }
 
 export interface AuthPreferences {
   submissions: boolean
   maintenance: boolean
   weeklyEmail: boolean
+}
+
+function isPlatformRole(user: AuthUser | null): boolean {
+  if (!user) return false
+  if (typeof user.isPlatform === 'boolean') return user.isPlatform
+  return user.role === 'platform' || user.role === 'owner'
 }
 
 export const useAuthStore = defineStore('auth', () => {
@@ -29,6 +36,7 @@ export const useAuthStore = defineStore('auth', () => {
   const loading = ref(false)
 
   const isAuthenticated = computed(() => Boolean(token.value && user.value))
+  const isPlatform = computed(() => isPlatformRole(user.value))
   const initials = computed(() => {
     if (!user.value?.name) return '?'
     return user.value.name
@@ -49,7 +57,10 @@ export const useAuthStore = defineStore('auth', () => {
       token.value = payload.token
       setToken(payload.token)
     }
-    user.value = payload.user
+    user.value = {
+      ...payload.user,
+      isPlatform: isPlatformRole(payload.user),
+    }
     if (payload.preferences) preferences.value = payload.preferences
     website.value = {
       id: payload.website.id,
@@ -119,6 +130,7 @@ export const useAuthStore = defineStore('auth', () => {
     bootstrapped,
     loading,
     isAuthenticated,
+    isPlatform,
     initials,
     login,
     logout,

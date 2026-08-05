@@ -18,10 +18,12 @@ export const useClientStore = defineStore('client', () => {
   const mobileNavOpen = ref(false)
 
   const client = computed<ClientWebsite>(() => auth.website ?? EMPTY_CLIENT)
-  const navItems = computed(() => getNavForClient(client.value.modules))
+  const navItems = computed(() =>
+    getNavForClient(client.value.modules, auth.isPlatform),
+  )
 
   function canAccess(module: ModuleKey) {
-    return hasModule(client.value.modules, module)
+    return hasModule(client.value.modules, module, auth.isPlatform)
   }
 
   function toggleSidebar() {

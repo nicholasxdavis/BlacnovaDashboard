@@ -70,6 +70,24 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/SettingsView.vue'),
         meta: { module: 'settings' as ModuleKey, title: 'Settings' },
       },
+      {
+        path: 'clients',
+        name: 'Clients',
+        component: () => import('@/views/ClientsView.vue'),
+        meta: { module: 'clients' as ModuleKey, title: 'Clients', owner: true },
+      },
+      {
+        path: 'accounts',
+        name: 'Accounts',
+        component: () => import('@/views/AccountsView.vue'),
+        meta: { module: 'accounts' as ModuleKey, title: 'Accounts', owner: true },
+      },
+      {
+        path: 'billing',
+        name: 'Billing',
+        component: () => import('@/views/BillingView.vue'),
+        meta: { module: 'billing' as ModuleKey, title: 'Billing', owner: true },
+      },
     ],
   },
   {
@@ -130,6 +148,10 @@ router.beforeEach(async (to, _from, next) => {
 
     const clientStore = useClientStore()
     const module = to.meta.module as ModuleKey | undefined
+    if (to.meta.owner && !auth.isPlatform) {
+      next('/overview')
+      return
+    }
     if (module && !clientStore.canAccess(module)) {
       next('/overview')
       return

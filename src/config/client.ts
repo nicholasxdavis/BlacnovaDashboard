@@ -1,6 +1,6 @@
 import type { ClientWebsite, ModuleKey, NavItem } from '@/types'
 
-export const ALL_NAV: NavItem[] = [
+export const CLIENT_NAV: NavItem[] = [
   { key: 'overview', label: 'Overview', path: '/overview', icon: 'House' },
   { key: 'content', label: 'Content', path: '/content', icon: 'TextT' },
   { key: 'media', label: 'Media', path: '/media', icon: 'Image' },
@@ -11,28 +11,35 @@ export const ALL_NAV: NavItem[] = [
   { key: 'settings', label: 'Settings', path: '/settings', icon: 'GearSix' },
 ]
 
-/** Demo client. Swap modules to show/hide entire sections. */
+/** Platform-owner tools — only for Blacnova staff accounts. */
+export const OWNER_NAV: NavItem[] = [
+  { key: 'clients', label: 'Clients', path: '/clients', icon: 'Buildings', ownerOnly: true },
+  { key: 'accounts', label: 'Accounts', path: '/accounts', icon: 'Users', ownerOnly: true },
+  { key: 'billing', label: 'Billing', path: '/billing', icon: 'CurrencyDollar', ownerOnly: true },
+]
+
+/** @deprecated use CLIENT_NAV */
+export const ALL_NAV = CLIENT_NAV
+
 export const DEMO_CLIENT: ClientWebsite = {
-  id: 'demo-summit',
-  name: 'Summit Ridge Dental',
-  domain: 'summitridgedental.com',
+  id: '',
+  name: '',
+  domain: '',
   status: 'live',
-  modules: [
-    'overview',
-    'content',
-    'media',
-    'pages',
-    'maintenance',
-    'submissions',
-    'analytics',
-    'settings',
-  ],
+  modules: [],
 }
 
-export function getNavForClient(modules: ModuleKey[]): NavItem[] {
-  return ALL_NAV.filter((item) => modules.includes(item.key))
+export function getNavForClient(modules: ModuleKey[], isPlatform = false): NavItem[] {
+  const clientItems = CLIENT_NAV.filter((item) => modules.includes(item.key))
+  if (!isPlatform) return clientItems
+  return [...clientItems, ...OWNER_NAV]
 }
 
-export function hasModule(modules: ModuleKey[], key: ModuleKey): boolean {
+export function hasModule(
+  modules: ModuleKey[],
+  key: ModuleKey,
+  isPlatform = false,
+): boolean {
+  if (OWNER_NAV.some((n) => n.key === key)) return isPlatform
   return modules.includes(key)
 }
