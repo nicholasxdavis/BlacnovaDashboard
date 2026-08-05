@@ -2,7 +2,7 @@
   <div class="page">
     <PageHeader
       title="Media"
-      description="Manage images and files used across your website."
+      description="Images used on your site — client logos, project screenshots, and brand assets. Replace a file here to update the live website."
     >
       <template #actions>
         <el-button type="primary" @click="openUpload()">

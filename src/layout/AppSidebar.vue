@@ -9,7 +9,7 @@
     <div class="sidebar__brand">
       <img
         class="brand-mark"
-        src="/bn_black.png"
+        src="/logo_white.png"
         alt="Blacnova"
         width="32"
         height="32"
@@ -118,12 +118,13 @@ const iconMap: Record<string, object> = {
   left: 0;
   bottom: 0;
   width: $bn-sidebar-width;
-  background: $bn-white;
-  border-right: $bn-border;
+  background: $bn-black;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   flex-direction: column;
   z-index: 100;
   transition: width 0.2s ease, transform 0.2s ease;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .sidebar.is-collapsed {
@@ -137,7 +138,7 @@ const iconMap: Record<string, object> = {
   gap: 12px;
   height: $bn-header-height;
   padding: 0 18px;
-  border-bottom: $bn-border;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   flex-shrink: 0;
   position: relative;
 }
@@ -146,7 +147,7 @@ const iconMap: Record<string, object> = {
   width: 32px;
   height: 32px;
   border-radius: 6px;
-  object-fit: cover;
+  object-fit: contain;
   flex-shrink: 0;
   display: block;
 }
@@ -158,13 +159,13 @@ const iconMap: Record<string, object> = {
 .brand-name {
   font-size: 14px;
   font-weight: 500;
-  color: $bn-black;
+  color: $bn-white;
   line-height: 1.2;
 }
 
 .brand-sub {
   font-size: 11px;
-  color: $bn-gray-500;
+  color: rgba(255, 255, 255, 0.5);
   margin-top: 1px;
 }
 
@@ -175,15 +176,15 @@ const iconMap: Record<string, object> = {
   border: none;
   border-radius: $bn-radius-sm;
   background: transparent;
-  color: $bn-gray-500;
+  color: rgba(255, 255, 255, 0.55);
   display: grid;
   place-items: center;
   cursor: pointer;
 }
 
 .sidebar__close:hover {
-  background: $bn-gray-50;
-  color: $bn-black;
+  background: rgba(255, 255, 255, 0.08);
+  color: $bn-white;
 }
 
 .sidebar__nav {
@@ -198,12 +199,12 @@ const iconMap: Record<string, object> = {
 .nav-divider {
   margin: 12px 8px 6px;
   padding-top: 10px;
-  border-top: $bn-border;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: $bn-gray-400;
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .nav-item {
@@ -213,19 +214,19 @@ const iconMap: Record<string, object> = {
   gap: 10px;
   padding: 9px 12px;
   border-radius: $bn-radius-sm;
-  color: $bn-gray-500;
+  color: rgba(255, 255, 255, 0.55);
   transition: background 0.12s ease, color 0.12s ease;
   min-height: 38px;
 }
 
 .nav-item:hover {
-  background: $bn-gray-50;
-  color: $bn-gray-900;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .nav-item.router-link-active {
-  background: $bn-gray-50;
-  color: $bn-black;
+  background: rgba(255, 255, 255, 0.08);
+  color: $bn-white;
   font-weight: 500;
 }
 
@@ -241,7 +242,7 @@ const iconMap: Record<string, object> = {
 }
 
 .nav-item.router-link-active .nav-item__icon {
-  color: $bn-black;
+  color: $bn-white;
 }
 
 .nav-item__icon {
@@ -280,12 +281,12 @@ const iconMap: Record<string, object> = {
 .sidebar__site {
   margin: 0 12px 16px;
   padding: 12px;
-  border-top: $bn-border;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .site-label {
   font-size: 11px;
-  color: $bn-gray-400;
+  color: rgba(255, 255, 255, 0.4);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin-bottom: 6px;
@@ -294,12 +295,12 @@ const iconMap: Record<string, object> = {
 .site-name {
   font-size: 13px;
   font-weight: 500;
-  color: $bn-gray-900;
+  color: $bn-white;
 }
 
 .site-domain {
   font-size: 12px;
-  color: $bn-gray-500;
+  color: rgba(255, 255, 255, 0.5);
   margin-top: 2px;
   word-break: break-all;
 }
@@ -308,7 +309,7 @@ const iconMap: Record<string, object> = {
   .sidebar {
     transform: translateX(-100%);
     width: min(288px, 86vw) !important;
-    box-shadow: 8px 0 24px rgba(0, 0, 0, 0.08);
+    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.45);
   }
 
   .sidebar.is-collapsed {

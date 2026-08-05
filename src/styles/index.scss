@@ -198,7 +198,7 @@ p {
 }
 
 .status-dot--ok::before {
-  background: #3d8b4f;
+  background: $bn-orange;
 }
 
 .status-dot--warn::before {
