@@ -8,39 +8,51 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f5f5f5" />
+    <meta name="theme-color" content="#000000" />
     <title>Blacnova Client Portal</title>
     <style>
       html, body, #app {
         margin: 0;
         min-height: 100%;
-        background: #f5f5f5;
+        background: #000000;
         font-family: Poppins, system-ui, sans-serif;
       }
       .bn-boot {
         min-height: 100vh;
+        min-height: 100dvh;
         display: grid;
         place-items: center;
-        color: #6b7280;
-        font-size: 14px;
-        letter-spacing: 0.02em;
+        background: #000000;
       }
-      .bn-boot__mark {
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
-        background: #d4611c;
-        margin: 0 auto 14px;
+      .bn-boot__logo {
+        width: 88px;
+        height: 88px;
+        object-fit: contain;
+        display: block;
+        animation: bn-boot-in 0.45s ease both;
+      }
+      @keyframes bn-boot-in {
+        from {
+          opacity: 0;
+          transform: scale(0.92);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
       }
     </style>
   </head>
   <body>
     <div id="app">
-      <div class="bn-boot" role="status" aria-live="polite">
-        <div>
-          <div class="bn-boot__mark" aria-hidden="true"></div>
-          Loading Blacnova…
-        </div>
+      <div class="bn-boot" role="status" aria-live="polite" aria-label="Loading Blacnova">
+        <img
+          class="bn-boot__logo"
+          src="/bn_orange.png"
+          alt="Blacnova"
+          width="88"
+          height="88"
+        />
       </div>
     </div>
     <script type="module" src="/src/main.ts"></script>
