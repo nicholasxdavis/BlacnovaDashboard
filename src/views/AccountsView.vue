@@ -15,7 +15,7 @@
         <el-table-column prop="email" label="Email" width="200" show-overflow-tooltip />
         <el-table-column label="Website" width="150" show-overflow-tooltip>
           <template #default="{ row }">
-            <div>{{ row.websiteName || '—' }}</div>
+            <div>{{ row.websiteName || '-' }}</div>
             <div class="muted">{{ row.websiteDomain }}</div>
           </template>
         </el-table-column>

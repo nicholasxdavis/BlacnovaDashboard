@@ -24,9 +24,9 @@ export const useWebsiteStore = defineStore('website', () => {
   const submissions = ref<Submission[]>([])
   const analytics = ref<AnalyticsPoint[]>([])
   const deltas = ref({
-    visitors: { label: '—', trend: 'flat' as 'up' | 'down' | 'flat' },
-    pageviews: { label: '—', trend: 'flat' as 'up' | 'down' | 'flat' },
-    submissions: { label: '—', trend: 'flat' as 'up' | 'down' | 'flat' },
+    visitors: { label: '-', trend: 'flat' as 'up' | 'down' | 'flat' },
+    pageviews: { label: '-', trend: 'flat' as 'up' | 'down' | 'flat' },
+    submissions: { label: '-', trend: 'flat' as 'up' | 'down' | 'flat' },
   })
   const loaded = ref(false)
   const loading = ref(false)

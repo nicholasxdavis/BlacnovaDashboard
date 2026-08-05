@@ -11,7 +11,7 @@ export const CLIENT_NAV: NavItem[] = [
   { key: 'settings', label: 'Settings', path: '/settings', icon: 'GearSix' },
 ]
 
-/** Platform-owner tools — only for Blacnova staff accounts. */
+/** Platform-owner tools. Only for Blacnova staff accounts. */
 export const OWNER_NAV: NavItem[] = [
   { key: 'clients', label: 'Clients', path: '/clients', icon: 'Buildings', ownerOnly: true },
   { key: 'accounts', label: 'Accounts', path: '/accounts', icon: 'Users', ownerOnly: true },

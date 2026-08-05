@@ -203,7 +203,7 @@ async function publish() {
     ElMessage.success(
       changed
         ? `Published ${result.blocks} blocks to GitHub (${changed} file${changed === 1 ? '' : 's'} updated)`
-        : `Synced ${result.blocks} blocks — site files already up to date`,
+        : `Synced ${result.blocks} blocks. Site files already up to date.`,
     )
   } catch (err: unknown) {
     const message =

@@ -219,9 +219,51 @@
 }
 
 .el-message--success {
-  --el-message-bg-color: #{$bn-orange-soft};
-  --el-message-border-color: #{$bn-orange-border};
-  --el-message-text-color: #{$bn-orange-active};
+  --el-message-bg-color: #{$bn-orange-soft} !important;
+  --el-message-border-color: #{$bn-orange-border} !important;
+  --el-message-text-color: #{$bn-orange-active} !important;
+  background-color: $bn-orange-soft !important;
+  border-color: $bn-orange-border !important;
+}
+
+.el-message--success .el-message__content {
+  color: $bn-orange-active !important;
+}
+
+.el-message--success .el-message__icon,
+.el-message--success .el-icon {
+  color: $bn-orange !important;
+}
+
+.el-message--info {
+  --el-message-bg-color: #{$bn-gray-50} !important;
+  --el-message-border-color: #{$bn-gray-200} !important;
+  --el-message-text-color: #{$bn-gray-700} !important;
+}
+
+.el-message--info .el-message__icon,
+.el-message--info .el-icon {
+  color: $bn-orange !important;
+}
+
+.el-message--warning {
+  --el-message-bg-color: #{$bn-orange-soft} !important;
+  --el-message-border-color: #{$bn-orange-border} !important;
+  --el-message-text-color: #{$bn-orange-active} !important;
+}
+
+.el-message--warning .el-message__icon,
+.el-message--warning .el-icon {
+  color: $bn-orange !important;
+}
+
+.el-notification--success {
+  --el-notification-icon-color: #{$bn-orange};
+  border-color: $bn-orange-border;
+}
+
+.el-notification--success .el-notification__icon {
+  color: $bn-orange !important;
 }
 
 .el-pagination {

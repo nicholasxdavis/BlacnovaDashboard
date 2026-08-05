@@ -172,7 +172,7 @@ async function publishSite() {
     const changed = result.files.filter((f) => f.updated).length
     ElMessage.success(
       changed
-        ? `Published to GitHub — ${changed} file${changed === 1 ? '' : 's'} updated`
+        ? `Published to GitHub (${changed} file${changed === 1 ? '' : 's'} updated)`
         : 'Site already in sync with published content',
     )
   } catch (err: unknown) {

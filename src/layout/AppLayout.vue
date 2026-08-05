@@ -20,12 +20,20 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
+import { computed, onMounted, onUnmounted } from 'vue'
 import AppSidebar from './AppSidebar.vue'
 import AppHeader from './AppHeader.vue'
 import { useClientStore } from '@/stores/client'
+import { useBodyScrollLock, useElementPlusScrollLock } from '@/composables/useBodyScrollLock'
 
 const clientStore = useClientStore()
+
+const lockBackground = computed(
+  () => clientStore.mobileNavOpen && typeof window !== 'undefined' && window.innerWidth <= 900,
+)
+
+useBodyScrollLock(lockBackground)
+useElementPlusScrollLock()
 
 function onResize() {
   if (window.innerWidth > 900 && clientStore.mobileNavOpen) {
@@ -50,6 +58,7 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
   background: rgba(17, 17, 17, 0.35);
   z-index: 90;
   display: none;
+  touch-action: none;
 }
 
 .app-main {

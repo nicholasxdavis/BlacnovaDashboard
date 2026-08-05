@@ -25,7 +25,7 @@
             </el-table-column>
             <el-table-column label="Website" min-width="140">
               <template #default="{ row }">
-                {{ row.websiteName || '—' }}
+                {{ row.websiteName || '-' }}
               </template>
             </el-table-column>
             <el-table-column prop="description" label="Description" min-width="160" />
@@ -58,7 +58,7 @@
               </template>
             </el-table-column>
             <el-table-column label="Website" min-width="140">
-              <template #default="{ row }">{{ row.websiteName || '—' }}</template>
+              <template #default="{ row }">{{ row.websiteName || '-' }}</template>
             </el-table-column>
             <el-table-column prop="description" label="Description" min-width="150" />
             <el-table-column prop="formatted" label="Amount" width="110" />
@@ -75,7 +75,7 @@
               </template>
             </el-table-column>
             <el-table-column prop="lastSentOn" label="Last sent" width="120">
-              <template #default="{ row }">{{ row.lastSentOn || '—' }}</template>
+              <template #default="{ row }">{{ row.lastSentOn || '-' }}</template>
             </el-table-column>
             <el-table-column label="" width="220" align="right">
               <template #default="{ row }">
@@ -113,7 +113,7 @@
             v-model="sendForm.description"
             type="textarea"
             :rows="2"
-            placeholder="Monthly website management — August"
+            placeholder="Monthly website management (August)"
           />
         </div>
         <div>
@@ -165,7 +165,7 @@
         <div>
           <label class="field-label">Bill on day of month</label>
           <el-input-number v-model="recurringForm.dayOfMonth" :min="1" :max="28" style="width: 100%" />
-          <p class="hint">Uses days 1–28 so every month has that date.</p>
+          <p class="hint">Uses days 1-28 so every month has that date.</p>
         </div>
         <div>
           <label class="field-label">Client website (optional)</label>

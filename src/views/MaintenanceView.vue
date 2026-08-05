@@ -158,7 +158,7 @@ async function save() {
     ElMessage.success(
       draft.enabled
         ? 'Maintenance mode is live on www.blacnova.net'
-        : 'Maintenance mode turned off — site is live',
+        : 'Maintenance mode turned off. Site is live.',
     )
   } catch {
     ElMessage.error('Could not save maintenance settings')

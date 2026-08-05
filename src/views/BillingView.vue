@@ -16,13 +16,13 @@
         <div class="metric-grid">
           <MetricCard
             label="Available"
-            :value="billing?.balance.available.formatted || '—'"
+            :value="billing?.balance.available.formatted || '-'"
             delta="Stripe balance"
             trend="flat"
           />
           <MetricCard
             label="Pending"
-            :value="billing?.balance.pending.formatted || '—'"
+            :value="billing?.balance.pending.formatted || '-'"
             delta="Awaiting payout"
             trend="flat"
           />
@@ -80,19 +80,19 @@
         <div class="metric-grid">
           <MetricCard
             label="Outstanding balance"
-            :value="bmc?.balance.formatted || '—'"
+            :value="bmc?.balance.formatted || '-'"
             delta="All donations added up"
             trend="up"
           />
           <MetricCard
             label="Donations"
-            :value="bmc?.donations.formatted || '—'"
+            :value="bmc?.donations.formatted || '-'"
             :delta="`${bmc?.donations.count ?? 0} entries`"
             trend="flat"
           />
           <MetricCard
             label="Memberships"
-            :value="bmc?.memberships.formatted || '—'"
+            :value="bmc?.memberships.formatted || '-'"
             :delta="`${bmc?.memberships.count ?? 0} entries`"
             trend="flat"
           />
@@ -125,10 +125,10 @@
           </el-table-column>
           <el-table-column prop="kind" label="Type" width="120" />
           <el-table-column prop="membershipLevel" label="Level" width="120">
-            <template #default="{ row }">{{ row.membershipLevel || '—' }}</template>
+            <template #default="{ row }">{{ row.membershipLevel || '-' }}</template>
           </el-table-column>
           <el-table-column prop="message" label="Note" min-width="160">
-            <template #default="{ row }">{{ row.message || '—' }}</template>
+            <template #default="{ row }">{{ row.message || '-' }}</template>
           </el-table-column>
           <el-table-column prop="formatted" label="Amount" width="120" />
           <el-table-column prop="status" label="Status" width="110" />
