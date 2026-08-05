@@ -23,6 +23,11 @@ export const useWebsiteStore = defineStore('website', () => {
   })
   const submissions = ref<Submission[]>([])
   const analytics = ref<AnalyticsPoint[]>([])
+  const deltas = ref({
+    visitors: { label: '—', trend: 'flat' as 'up' | 'down' | 'flat' },
+    pageviews: { label: '—', trend: 'flat' as 'up' | 'down' | 'flat' },
+    submissions: { label: '—', trend: 'flat' as 'up' | 'down' | 'flat' },
+  })
   const loaded = ref(false)
   const loading = ref(false)
 
@@ -44,6 +49,7 @@ export const useWebsiteStore = defineStore('website', () => {
       maintenance.value = data.maintenance
       submissions.value = data.submissions
       analytics.value = data.analytics
+      if (data.deltas) deltas.value = data.deltas
       loaded.value = true
     } finally {
       loading.value = false
@@ -138,6 +144,7 @@ export const useWebsiteStore = defineStore('website', () => {
     maintenance,
     submissions,
     analytics,
+    deltas,
     loaded,
     loading,
     newSubmissionCount,

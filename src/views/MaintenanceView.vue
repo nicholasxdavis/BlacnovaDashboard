@@ -148,9 +148,18 @@ async function save() {
   }
   saving.value = true
   try {
-    await websiteStore.updateMaintenance({ ...draft })
+    await websiteStore.updateMaintenance({
+      enabled: draft.enabled,
+      title: draft.title.trim(),
+      message: draft.message.trim(),
+      expectedReturn: draft.expectedReturn || '',
+    })
     previousEnabled = draft.enabled
-    ElMessage.success(draft.enabled ? 'Maintenance mode saved and active' : 'Maintenance settings saved')
+    ElMessage.success(
+      draft.enabled
+        ? 'Maintenance mode is live on www.blacnova.net'
+        : 'Maintenance mode turned off — site is live',
+    )
   } catch {
     ElMessage.error('Could not save maintenance settings')
   } finally {

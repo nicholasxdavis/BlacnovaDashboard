@@ -20,11 +20,21 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, onUnmounted } from 'vue'
 import AppSidebar from './AppSidebar.vue'
 import AppHeader from './AppHeader.vue'
 import { useClientStore } from '@/stores/client'
 
 const clientStore = useClientStore()
+
+function onResize() {
+  if (window.innerWidth > 900 && clientStore.mobileNavOpen) {
+    clientStore.setMobileNav(false)
+  }
+}
+
+onMounted(() => window.addEventListener('resize', onResize))
+onUnmounted(() => window.removeEventListener('resize', onResize))
 </script>
 
 <style scoped lang="scss">

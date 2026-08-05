@@ -1,7 +1,10 @@
 <template>
   <aside
     class="sidebar"
-    :class="{ 'is-collapsed': clientStore.sidebarCollapsed, 'is-open': clientStore.mobileNavOpen }"
+    :class="{
+      'is-collapsed': isIconRail,
+      'is-open': clientStore.mobileNavOpen,
+    }"
   >
     <div class="sidebar__brand">
       <img
@@ -11,10 +14,19 @@
         width="32"
         height="32"
       />
-      <div class="brand-text">
+      <div v-show="showLabels" class="brand-text">
         <div class="brand-name">Blacnova</div>
         <div class="brand-sub">Client Portal</div>
       </div>
+      <button
+        v-if="clientStore.mobileNavOpen"
+        class="sidebar__close"
+        type="button"
+        aria-label="Close menu"
+        @click="clientStore.setMobileNav(false)"
+      >
+        <PhX :size="18" />
+      </button>
     </div>
 
     <nav class="sidebar__nav" aria-label="Main">
@@ -23,13 +35,13 @@
         :key="item.key"
         :to="item.path"
         class="nav-item"
-        :title="clientStore.sidebarCollapsed ? item.label : undefined"
+        :title="showLabels ? undefined : item.label"
         @click="clientStore.setMobileNav(false)"
       >
         <component :is="iconMap[item.icon]" :size="20" weight="regular" class="nav-item__icon" />
-        <span v-show="!clientStore.sidebarCollapsed" class="nav-item__label">{{ item.label }}</span>
+        <span v-show="showLabels" class="nav-item__label">{{ item.label }}</span>
         <span
-          v-if="item.key === 'submissions' && websiteStore.newSubmissionCount && !clientStore.sidebarCollapsed"
+          v-if="item.key === 'submissions' && websiteStore.newSubmissionCount && showLabels"
           class="nav-item__badge"
         >
           {{ websiteStore.newSubmissionCount }}
@@ -37,7 +49,7 @@
       </router-link>
     </nav>
 
-    <div v-show="!clientStore.sidebarCollapsed" class="sidebar__site">
+    <div v-show="showLabels" class="sidebar__site">
       <div class="site-label">Current website</div>
       <div class="site-name">{{ clientStore.client.name }}</div>
       <div class="site-domain">{{ clientStore.client.domain }}</div>
@@ -46,6 +58,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import {
   PhHouse,
   PhTextT,
@@ -55,12 +68,22 @@ import {
   PhEnvelopeSimple,
   PhChartLine,
   PhGearSix,
+  PhX,
 } from '@phosphor-icons/vue'
 import { useClientStore } from '@/stores/client'
 import { useWebsiteStore } from '@/stores/website'
 
 const clientStore = useClientStore()
 const websiteStore = useWebsiteStore()
+
+/** Mobile drawer always shows labels; desktop rail can collapse. */
+const showLabels = computed(
+  () => clientStore.mobileNavOpen || !clientStore.sidebarCollapsed,
+)
+
+const isIconRail = computed(
+  () => clientStore.sidebarCollapsed && !clientStore.mobileNavOpen,
+)
 
 const iconMap: Record<string, object> = {
   House: PhHouse,
@@ -102,6 +125,7 @@ const iconMap: Record<string, object> = {
   padding: 0 18px;
   border-bottom: $bn-border;
   flex-shrink: 0;
+  position: relative;
 }
 
 .brand-mark {
@@ -114,7 +138,38 @@ const iconMap: Record<string, object> = {
 }
 
 .brand-text {
-  display: none;
+  min-width: 0;
+}
+
+.brand-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: $bn-black;
+  line-height: 1.2;
+}
+
+.brand-sub {
+  font-size: 11px;
+  color: $bn-gray-500;
+  margin-top: 1px;
+}
+
+.sidebar__close {
+  margin-left: auto;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: $bn-radius-sm;
+  background: transparent;
+  color: $bn-gray-500;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.sidebar__close:hover {
+  background: $bn-gray-50;
+  color: $bn-black;
 }
 
 .sidebar__nav {
@@ -201,11 +256,6 @@ const iconMap: Record<string, object> = {
   margin: 0 12px 16px;
   padding: 12px;
   border-top: $bn-border;
-  border-radius: 0;
-  background: transparent;
-  border-left: none;
-  border-right: none;
-  border-bottom: none;
 }
 
 .site-label {
@@ -232,11 +282,25 @@ const iconMap: Record<string, object> = {
 @media (max-width: 900px) {
   .sidebar {
     transform: translateX(-100%);
-    width: $bn-sidebar-width !important;
+    width: min(288px, 86vw) !important;
+    box-shadow: 8px 0 24px rgba(0, 0, 0, 0.08);
+  }
+
+  .sidebar.is-collapsed {
+    width: min(288px, 86vw) !important;
   }
 
   .sidebar.is-open {
     transform: translateX(0);
+  }
+
+  .sidebar.is-open .nav-item {
+    justify-content: flex-start;
+    padding: 9px 12px;
+  }
+
+  .sidebar.is-open .nav-item.router-link-active::before {
+    display: block;
   }
 }
 </style>

@@ -2,10 +2,11 @@
   <div class="page">
     <PageHeader
       title="Analytics"
-      description="Website traffic and engagement for the selected period."
+      description="Live traffic for www.blacnova.net via Cloudflare Workers analytics."
     >
       <template #actions>
         <el-select v-model="range" style="width: 160px">
+          <el-option label="All recorded" value="all" />
           <el-option label="Last 5 weeks" value="5w" />
           <el-option label="Last 30 days" value="30d" />
         </el-select>
@@ -16,26 +17,26 @@
       <MetricCard
         label="Visitors"
         :value="totals.visitors.toLocaleString()"
-        delta="+4.8% vs prior period"
-        trend="up"
+        :delta="websiteStore.deltas.visitors.label"
+        :trend="websiteStore.deltas.visitors.trend"
       />
       <MetricCard
         label="Page views"
         :value="totals.pageviews.toLocaleString()"
-        delta="+3.1% vs prior period"
-        trend="up"
+        :delta="websiteStore.deltas.pageviews.label"
+        :trend="websiteStore.deltas.pageviews.trend"
       />
       <MetricCard
         label="Form submissions"
         :value="totals.submissions"
-        delta="+2 vs prior period"
-        trend="up"
+        :delta="websiteStore.deltas.submissions.label"
+        :trend="websiteStore.deltas.submissions.trend"
         accent
       />
       <MetricCard
         label="Avg. pages / visit"
         :value="avgPages"
-        delta="Steady"
+        delta="From live Cloudflare-backed tracking"
         trend="flat"
       />
     </div>
@@ -64,9 +65,17 @@ import BnChart from '@/components/BnChart.vue'
 import { useWebsiteStore } from '@/stores/website'
 
 const websiteStore = useWebsiteStore()
-const range = ref('5w')
+const range = ref('all')
 
-const series = computed(() => websiteStore.analytics)
+const series = computed(() => {
+  const all = websiteStore.analytics
+  if (range.value === '30d') {
+    const cutoff = dayjs().subtract(30, 'day')
+    return all.filter((p) => dayjs(p.date).isAfter(cutoff) || dayjs(p.date).isSame(cutoff, 'day'))
+  }
+  if (range.value === '5w') return all.slice(-5)
+  return all
+})
 
 const totals = computed(() =>
   series.value.reduce(

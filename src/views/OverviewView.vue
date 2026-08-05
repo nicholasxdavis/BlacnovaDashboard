@@ -21,16 +21,16 @@
 
     <div class="metric-grid section">
       <MetricCard
-        label="Visitors (last 7 days)"
+        label="Visitors (recorded)"
         :value="latest.visitors.toLocaleString()"
-        delta="+4.8% vs prior week"
-        trend="up"
+        :delta="websiteStore.deltas.visitors.label"
+        :trend="websiteStore.deltas.visitors.trend"
       />
       <MetricCard
-        label="Page views (last 7 days)"
+        label="Page views (recorded)"
         :value="latest.pageviews.toLocaleString()"
-        delta="+3.1% vs prior week"
-        trend="up"
+        :delta="websiteStore.deltas.pageviews.label"
+        :trend="websiteStore.deltas.pageviews.trend"
       />
       <MetricCard
         label="New submissions"

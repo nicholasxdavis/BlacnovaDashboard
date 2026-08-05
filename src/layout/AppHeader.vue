@@ -71,6 +71,7 @@ const statusClass = computed(() => {
 
 function onToggleNav() {
   if (window.innerWidth <= 900) {
+    // Mobile drawer is always the expanded labeled menu
     clientStore.setMobileNav(!clientStore.mobileNavOpen)
   } else {
     clientStore.toggleSidebar()
