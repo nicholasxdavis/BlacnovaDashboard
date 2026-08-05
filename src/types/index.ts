@@ -143,6 +143,29 @@ export interface BillingOverview {
   }>
 }
 
+export interface BmcOverview {
+  balance: { amountCents: number; formatted: string; label: string }
+  donations: { count: number; amountCents: number; formatted: string }
+  memberships: { count: number; amountCents: number; formatted: string }
+  webhookUrl: string
+  entries: Array<{
+    id: string
+    eventType: string
+    kind: string
+    status: string
+    supporterName: string
+    supporterEmail: string | null
+    message: string | null
+    amountCents: number
+    currency: string
+    formatted: string
+    coffees: number | null
+    membershipLevel: string | null
+    liveMode: boolean
+    occurredAt: string
+  }>
+}
+
 export interface DashboardInvoice {
   id: string
   websiteId: string | null
