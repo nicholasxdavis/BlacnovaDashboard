@@ -39,7 +39,7 @@ h4,
 h5,
 h6 {
   margin: 0;
-  font-weight: 600;
+  font-weight: 500;
   color: $bn-black;
   line-height: 1.3;
 }
@@ -98,7 +98,7 @@ p {
 
 .section__title {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   margin-bottom: 4px;
   color: $bn-gray-900;
 }
@@ -156,7 +156,7 @@ p {
 
 .metric__value {
   font-size: 26px;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: -0.03em;
   color: $bn-black;
   line-height: 1.1;
@@ -226,7 +226,7 @@ p {
 
 .empty-state__title {
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 500;
   color: $bn-gray-700;
   margin-bottom: 4px;
 }
@@ -293,6 +293,12 @@ p {
   font-weight: 500;
   color: $bn-gray-700;
   margin-bottom: 6px;
+}
+
+.ticket-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .split-layout {

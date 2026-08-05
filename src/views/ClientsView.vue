@@ -9,7 +9,7 @@
       </template>
     </PageHeader>
 
-    <div class="surface">
+    <div class="surface table-scroll">
       <el-table :data="clients" v-loading="loading" empty-text="No clients yet">
         <el-table-column prop="name" label="Client" min-width="160" />
         <el-table-column prop="domain" label="Domain" min-width="180">
@@ -43,7 +43,7 @@
       </el-table>
     </div>
 
-    <el-dialog v-model="dialogOpen" title="Add client website" width="440px" destroy-on-close>
+    <el-dialog v-model="dialogOpen" title="Add client website" width="440px" class="bn-dialog" destroy-on-close>
       <div class="ticket-form">
         <div>
           <label class="field-label">Name</label>

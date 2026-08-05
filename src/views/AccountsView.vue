@@ -9,7 +9,7 @@
       </template>
     </PageHeader>
 
-    <div class="surface">
+    <div class="surface table-scroll">
       <el-table :data="accounts" v-loading="loading" empty-text="No accounts yet">
         <el-table-column prop="name" label="Name" min-width="140" />
         <el-table-column prop="email" label="Email" min-width="200" />

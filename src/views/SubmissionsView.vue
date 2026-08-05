@@ -344,7 +344,7 @@ async function copyText(value: string) {
 <style scoped lang="scss">
 .new-count {
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   color: $bn-orange;
   background: $bn-orange-soft;
   border: 1px solid $bn-orange-border;
@@ -364,7 +364,7 @@ async function copyText(value: string) {
 }
 
 .contact__name {
-  font-weight: 600;
+  font-weight: 500;
   color: $bn-black;
 }
 
@@ -401,7 +401,7 @@ async function copyText(value: string) {
 
 .drawer-head__title {
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 500;
   color: $bn-black;
 }
 

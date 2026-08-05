@@ -96,7 +96,7 @@ async function onStatus(id: string, status: string) {
 
 <style scoped lang="scss">
 .page-title {
-  font-weight: 600;
+  font-weight: 500;
   color: $bn-black;
 }
 

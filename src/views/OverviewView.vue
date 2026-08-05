@@ -314,7 +314,7 @@ function formatDate(value: string) {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 13px;
   color: $bn-black;
   transition: color 0.12s ease;

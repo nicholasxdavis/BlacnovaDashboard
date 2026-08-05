@@ -12,7 +12,7 @@
 
     <el-tabs v-model="tab">
       <el-tab-pane label="Sent" name="sent">
-        <div class="surface">
+        <div class="surface table-scroll">
           <el-table :data="invoices" v-loading="loading" empty-text="No invoices yet">
             <el-table-column prop="createdAt" label="Sent" width="160">
               <template #default="{ row }">{{ formatDate(row.sentAt || row.createdAt) }}</template>
@@ -49,7 +49,7 @@
       </el-tab-pane>
 
       <el-tab-pane label="Recurring" name="recurring">
-        <div class="surface">
+        <div class="surface table-scroll">
           <el-table :data="recurring" v-loading="loading" empty-text="No recurring invoices yet">
             <el-table-column prop="customerName" label="Customer" min-width="140">
               <template #default="{ row }">

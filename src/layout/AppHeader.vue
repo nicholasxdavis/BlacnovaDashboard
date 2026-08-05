@@ -139,7 +139,7 @@ async function onCommand(command: string) {
 
 .header__site {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   color: $bn-black;
   white-space: nowrap;
   overflow: hidden;
@@ -206,7 +206,7 @@ async function onCommand(command: string) {
   display: grid;
   place-items: center;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 500;
   color: $bn-gray-700;
 }
 

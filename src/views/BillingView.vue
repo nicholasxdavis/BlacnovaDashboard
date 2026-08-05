@@ -42,7 +42,7 @@
       </div>
 
       <div class="billing-grid section">
-        <div class="surface">
+        <div class="surface table-scroll">
           <div class="surface-pad" style="padding-bottom: 8px">
             <div class="section__title">Charges</div>
             <p class="section__desc">Latest payments from Stripe</p>
@@ -58,7 +58,7 @@
           </el-table>
         </div>
 
-        <div class="surface">
+        <div class="surface table-scroll">
           <div class="surface-pad" style="padding-bottom: 8px">
             <div class="section__title">Payouts</div>
             <p class="section__desc">Transfers to your bank</p>
@@ -105,7 +105,7 @@
         </div>
       </div>
 
-      <div class="surface section">
+      <div class="surface section table-scroll">
         <div class="surface-pad" style="padding-bottom: 8px">
           <div class="section__title">Supporters &amp; memberships</div>
           <p class="section__desc">

@@ -9,7 +9,7 @@
     <div class="sidebar__brand">
       <img
         class="brand-mark"
-        src="/bn-icon.png"
+        src="/bn_black.png"
         alt="Blacnova"
         width="32"
         height="32"
@@ -157,7 +157,7 @@ const iconMap: Record<string, object> = {
 
 .brand-name {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   color: $bn-black;
   line-height: 1.2;
 }
@@ -200,7 +200,7 @@ const iconMap: Record<string, object> = {
   padding-top: 10px;
   border-top: $bn-border;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: $bn-gray-400;
@@ -226,7 +226,7 @@ const iconMap: Record<string, object> = {
 .nav-item.router-link-active {
   background: $bn-gray-50;
   color: $bn-black;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .nav-item.router-link-active::before {
@@ -235,7 +235,7 @@ const iconMap: Record<string, object> = {
   left: 0;
   top: 8px;
   bottom: 8px;
-  width: 2px;
+  width: 4px;
   border-radius: 1px;
   background: $bn-orange;
 }
@@ -262,7 +262,7 @@ const iconMap: Record<string, object> = {
   background: $bn-orange;
   color: $bn-white;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 500;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -293,7 +293,7 @@ const iconMap: Record<string, object> = {
 
 .site-name {
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   color: $bn-gray-900;
 }
 

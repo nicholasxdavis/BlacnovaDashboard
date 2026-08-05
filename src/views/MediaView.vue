@@ -288,7 +288,7 @@ async function confirmDelete(id: string, name: string) {
 
 .media-card__name {
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   color: $bn-black;
   white-space: nowrap;
   overflow: hidden;
@@ -330,7 +330,7 @@ async function confirmDelete(id: string, name: string) {
 .upload-drop__title {
   margin-top: 8px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
   color: $bn-gray-900;
 }
 

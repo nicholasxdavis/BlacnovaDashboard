@@ -117,7 +117,7 @@ function openItem(id: string) {
 
 .notify__title {
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   color: $bn-black;
 }
 
@@ -171,7 +171,7 @@ function openItem(id: string) {
 .notify__item-title {
   display: block;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   color: $bn-black;
 }
 
