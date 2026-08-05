@@ -27,8 +27,8 @@
       </a>
       <el-dropdown trigger="click" @command="onCommand">
         <button class="user-btn" type="button" aria-label="Account menu">
-          <span class="user-avatar">SC</span>
-          <span class="user-name">Sarah Chen</span>
+          <span class="user-avatar">{{ auth.initials }}</span>
+          <span class="user-name">{{ auth.user?.name || 'Account' }}</span>
           <PhCaretDown :size="14" />
         </button>
         <template #dropdown>
@@ -46,11 +46,13 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { PhList, PhArrowSquareOut, PhCaretDown } from '@phosphor-icons/vue'
+import { useAuthStore } from '@/stores/auth'
 import { useClientStore } from '@/stores/client'
 import { useWebsiteStore } from '@/stores/website'
 import NotifyBell from '@/components/NotifyBell.vue'
 
 const router = useRouter()
+const auth = useAuthStore()
 const clientStore = useClientStore()
 const websiteStore = useWebsiteStore()
 
@@ -75,9 +77,16 @@ function onToggleNav() {
   }
 }
 
-function onCommand(command: string) {
-  if (command === 'settings') router.push('/settings')
-  if (command === 'logout') router.push('/login')
+async function onCommand(command: string) {
+  if (command === 'settings') {
+    router.push('/settings')
+    return
+  }
+  if (command === 'logout') {
+    websiteStore.clear()
+    await auth.logout()
+    router.push('/login')
+  }
 }
 </script>
 

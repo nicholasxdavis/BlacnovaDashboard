@@ -52,7 +52,7 @@
           </el-button>
         </el-form>
 
-        <p class="login__hint">Demo: use any email and password to continue.</p>
+        <p class="login__hint">Sign in with your Blacnova account.</p>
       </template>
 
       <template v-else>
@@ -74,18 +74,29 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { useAuthStore } from '@/stores/auth'
+import { useWebsiteStore } from '@/stores/website'
 
 const router = useRouter()
-const email = ref('sarah@summitridgedental.com')
-const password = ref('demo')
+const route = useRoute()
+const auth = useAuthStore()
+const websiteStore = useWebsiteStore()
+
+const email = ref('')
+const password = ref('')
 const rememberMe = ref(true)
 const showForgot = ref(false)
 const loading = ref(false)
 const emailError = ref('')
 const passwordError = ref('')
+
+onMounted(() => {
+  const remembered = localStorage.getItem('bn-remember-email')
+  if (remembered) email.value = remembered
+})
 
 function validateEmail() {
   emailError.value = email.value.trim() ? '' : 'Enter your email'
@@ -103,14 +114,24 @@ async function onSubmit() {
     return
   }
   loading.value = true
-  await new Promise((r) => setTimeout(r, 500))
-  loading.value = false
-  if (rememberMe.value) {
-    localStorage.setItem('bn-remember-email', email.value)
-  } else {
-    localStorage.removeItem('bn-remember-email')
+  try {
+    await auth.login(email.value.trim(), password.value)
+    if (rememberMe.value) {
+      localStorage.setItem('bn-remember-email', email.value.trim())
+    } else {
+      localStorage.removeItem('bn-remember-email')
+    }
+    await websiteStore.fetchDashboard()
+    const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/overview'
+    await router.push(redirect)
+  } catch (err: unknown) {
+    const message =
+      (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
+      'Invalid email or password'
+    ElMessage.error(message)
+  } finally {
+    loading.value = false
   }
-  router.push('/overview')
 }
 </script>
 

@@ -67,8 +67,8 @@ const items = computed(() =>
     .slice(0, 5),
 )
 
-function markAll() {
-  websiteStore.markAllSubmissionsRead()
+async function markAll() {
+  await websiteStore.markAllSubmissionsRead()
 }
 
 function openItem(id: string) {

@@ -1,12 +1,25 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import { DEMO_CLIENT, getNavForClient, hasModule } from '@/config/client'
+import { getNavForClient, hasModule } from '@/config/client'
+import { useAuthStore } from '@/stores/auth'
 import type { ClientWebsite, ModuleKey } from '@/types'
 
+const EMPTY_CLIENT: ClientWebsite = {
+  id: '',
+  name: '',
+  domain: '',
+  status: 'live',
+  modules: [],
+}
+
 export const useClientStore = defineStore('client', () => {
-  const client = ref<ClientWebsite>({ ...DEMO_CLIENT })
   const sidebarCollapsed = ref(false)
   const mobileNavOpen = ref(false)
+
+  const client = computed<ClientWebsite>(() => {
+    const auth = useAuthStore()
+    return auth.website || EMPTY_CLIENT
+  })
 
   const navItems = computed(() => getNavForClient(client.value.modules))
 

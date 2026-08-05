@@ -97,11 +97,18 @@
         <label class="field-label" for="media-used">Used on</label>
         <el-input id="media-used" v-model="uploadUsedOn" placeholder="Home · Hero" />
       </div>
-      <div class="upload-drop" @click="pickDemoFile">
+      <div class="upload-drop" @click="pickFile">
         <PhUploadSimple :size="22" />
         <div class="upload-drop__title">{{ filePicked ? uploadName : 'Choose a file' }}</div>
-        <div class="upload-drop__hint">Demo mode adds a sample file to your library</div>
+        <div class="upload-drop__hint">Select an image or document from your device</div>
       </div>
+      <input
+        ref="fileInput"
+        type="file"
+        class="file-input"
+        accept="image/*,video/*,.pdf,.doc,.docx"
+        @change="onFilePicked"
+      />
       <template #footer>
         <el-button @click="dialogOpen = false">Cancel</el-button>
         <el-button type="primary" :loading="uploading" :disabled="!canSubmit" @click="submitUpload">
@@ -133,6 +140,8 @@ const uploadName = ref('')
 const uploadType = ref<MediaItem['type']>('image')
 const uploadUsedOn = ref('Library')
 const filePicked = ref(false)
+const selectedFile = ref<File | null>(null)
+const fileInput = ref<HTMLInputElement | null>(null)
 const uploading = ref(false)
 
 const filtered = computed(() => {
@@ -144,7 +153,7 @@ const filtered = computed(() => {
   })
 })
 
-const canSubmit = computed(() => Boolean(uploadName.value.trim() && filePicked.value))
+const canSubmit = computed(() => Boolean(uploadName.value.trim() && selectedFile.value))
 
 function openUpload(id?: string) {
   replaceId.value = id || null
@@ -165,54 +174,53 @@ function resetDialog() {
   uploadType.value = 'image'
   uploadUsedOn.value = 'Library'
   filePicked.value = false
+  selectedFile.value = null
   uploading.value = false
+  if (fileInput.value) fileInput.value.value = ''
 }
 
-function pickDemoFile() {
+function pickFile() {
+  fileInput.value?.click()
+}
+
+function onFilePicked(event: Event) {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+  selectedFile.value = file
   filePicked.value = true
-  if (!uploadName.value.trim()) {
-    uploadName.value = uploadType.value === 'image' ? 'new-image.jpg' : 'new-file.pdf'
-  }
+  if (!uploadName.value.trim()) uploadName.value = file.name
+  if (file.type.startsWith('image/')) uploadType.value = 'image'
+  else if (file.type.startsWith('video/')) uploadType.value = 'video'
+  else uploadType.value = 'document'
 }
 
 async function submitUpload() {
-  if (!canSubmit.value) {
+  if (!canSubmit.value || !selectedFile.value) {
     ElMessage.error('Choose a file and enter a name')
     return
   }
   uploading.value = true
-  await new Promise((r) => setTimeout(r, 500))
-  const today = new Date().toISOString().slice(0, 10)
-  if (replaceId.value) {
-    websiteStore.replaceMedia(replaceId.value, {
-      name: uploadName.value.trim(),
-      type: uploadType.value,
-      usedOn: uploadUsedOn.value.trim() || 'Library',
-      updatedAt: today,
-      size: '1.0 MB',
-      url:
-        uploadType.value === 'image'
-          ? 'https://images.unsplash.com/photo-1629909615184-74f495363b67?w=400&h=280&fit=crop'
-          : '',
-    })
-    ElMessage.success('Media replaced')
-  } else {
-    websiteStore.addMedia({
-      id: `m-${Date.now()}`,
-      name: uploadName.value.trim(),
-      type: uploadType.value,
-      size: '1.0 MB',
-      updatedAt: today,
-      usedOn: uploadUsedOn.value.trim() || 'Library',
-      url:
-        uploadType.value === 'image'
-          ? 'https://images.unsplash.com/photo-1629909615184-74f495363b67?w=400&h=280&fit=crop'
-          : '',
-    })
-    ElMessage.success('Media uploaded')
+  try {
+    const form = new FormData()
+    form.append('file', selectedFile.value)
+    form.append('name', uploadName.value.trim())
+    form.append('type', uploadType.value)
+    form.append('usedOn', uploadUsedOn.value.trim() || 'Library')
+
+    if (replaceId.value) {
+      await websiteStore.replaceMedia(replaceId.value, form)
+      ElMessage.success('Media replaced')
+    } else {
+      await websiteStore.addMedia(form)
+      ElMessage.success('Media uploaded')
+    }
+    dialogOpen.value = false
+  } catch {
+    ElMessage.error('Upload failed')
+  } finally {
+    uploading.value = false
   }
-  uploading.value = false
-  dialogOpen.value = false
 }
 
 async function confirmDelete(id: string, name: string) {
@@ -222,7 +230,7 @@ async function confirmDelete(id: string, name: string) {
       'Remove media',
       { confirmButtonText: 'Remove', cancelButtonText: 'Cancel', type: 'warning' },
     )
-    websiteStore.removeMedia(id)
+    await websiteStore.removeMedia(id)
     ElMessage.success('Media removed')
   } catch {
     /* cancelled */
@@ -234,6 +242,10 @@ async function confirmDelete(id: string, name: string) {
 .count-label {
   font-size: 13px;
   color: $bn-gray-500;
+}
+
+.file-input {
+  display: none;
 }
 
 .media-grid {

@@ -147,11 +147,15 @@ async function save() {
     return
   }
   saving.value = true
-  await new Promise((r) => setTimeout(r, 450))
-  websiteStore.updateMaintenance({ ...draft })
-  previousEnabled = draft.enabled
-  saving.value = false
-  ElMessage.success(draft.enabled ? 'Maintenance mode saved and active' : 'Maintenance settings saved')
+  try {
+    await websiteStore.updateMaintenance({ ...draft })
+    previousEnabled = draft.enabled
+    ElMessage.success(draft.enabled ? 'Maintenance mode saved and active' : 'Maintenance settings saved')
+  } catch {
+    ElMessage.error('Could not save maintenance settings')
+  } finally {
+    saving.value = false
+  }
 }
 </script>
 

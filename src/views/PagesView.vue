@@ -84,9 +84,13 @@ function goContent(pageTitle: string) {
   router.push({ path: '/content', query: { page: pageTitle } })
 }
 
-function onStatus(id: string, status: string) {
-  websiteStore.setPageStatus(id, status as WebsitePage['status'])
-  ElMessage.success('Page status updated')
+async function onStatus(id: string, status: string) {
+  try {
+    await websiteStore.setPageStatus(id, status as WebsitePage['status'])
+    ElMessage.success('Page status updated')
+  } catch {
+    ElMessage.error('Could not update page status')
+  }
 }
 </script>
 

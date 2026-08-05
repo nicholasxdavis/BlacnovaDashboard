@@ -44,15 +44,15 @@
         <div class="info-list">
           <div class="info-row">
             <span class="info-label">Signed in as</span>
-            <span>Sarah Chen</span>
+            <span>{{ auth.user?.name }}</span>
           </div>
           <div class="info-row">
             <span class="info-label">Email</span>
-            <span>sarah@summitridgedental.com</span>
+            <span>{{ auth.user?.email }}</span>
           </div>
           <div class="info-row">
             <span class="info-label">Role</span>
-            <span>Website manager</span>
+            <span>{{ auth.user?.role }}</span>
           </div>
         </div>
         <div class="btn-row">
@@ -166,16 +166,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { PhCheckCircle } from '@phosphor-icons/vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import PageHeader from '@/components/PageHeader.vue'
 import { ALL_NAV } from '@/config/client'
+import { useAuthStore } from '@/stores/auth'
 import { useClientStore } from '@/stores/client'
 import { useWebsiteStore } from '@/stores/website'
 
 const router = useRouter()
+const auth = useAuthStore()
 const clientStore = useClientStore()
 const websiteStore = useWebsiteStore()
 
@@ -183,6 +185,12 @@ const prefs = reactive({
   submissions: true,
   maintenance: true,
   weeklyEmail: false,
+})
+
+onMounted(() => {
+  prefs.submissions = auth.preferences.submissions
+  prefs.maintenance = auth.preferences.maintenance
+  prefs.weeklyEmail = auth.preferences.weeklyEmail
 })
 
 const ticket = reactive({
@@ -208,8 +216,13 @@ const moduleLabels = computed(() =>
 
 const canSendTicket = computed(() => ticket.message.trim().length >= 10)
 
-function savePrefs() {
-  ElMessage.success('Notification preferences saved')
+async function savePrefs() {
+  try {
+    await auth.savePreferences({ ...prefs })
+    ElMessage.success('Notification preferences saved')
+  } catch {
+    ElMessage.error('Could not save preferences')
+  }
 }
 
 async function sendTicket() {
@@ -218,11 +231,16 @@ async function sendTicket() {
     return
   }
   ticketSending.value = true
-  await new Promise((r) => setTimeout(r, 600))
-  ticketSending.value = false
-  ticketSent.value = true
-  ticket.message = ''
-  ElMessage.success('Support message sent')
+  try {
+    await auth.sendSupport(ticket.topic, ticket.message.trim())
+    ticketSent.value = true
+    ticket.message = ''
+    ElMessage.success('Support message sent')
+  } catch {
+    ElMessage.error('Could not send support message')
+  } finally {
+    ticketSending.value = false
+  }
 }
 
 async function savePassword() {
@@ -230,8 +248,8 @@ async function savePassword() {
     ElMessage.error('Fill in all password fields')
     return
   }
-  if (passwordForm.next.length < 8) {
-    ElMessage.error('New password must be at least 8 characters')
+  if (passwordForm.next.length < 4) {
+    ElMessage.error('New password must be at least 4 characters')
     return
   }
   if (passwordForm.next !== passwordForm.confirm) {
@@ -239,13 +257,21 @@ async function savePassword() {
     return
   }
   passwordSaving.value = true
-  await new Promise((r) => setTimeout(r, 500))
-  passwordSaving.value = false
-  passwordOpen.value = false
-  passwordForm.current = ''
-  passwordForm.next = ''
-  passwordForm.confirm = ''
-  ElMessage.success('Password updated')
+  try {
+    await auth.changePassword(passwordForm.current, passwordForm.next)
+    passwordOpen.value = false
+    passwordForm.current = ''
+    passwordForm.next = ''
+    passwordForm.confirm = ''
+    ElMessage.success('Password updated')
+  } catch (err: unknown) {
+    const message =
+      (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
+      'Could not update password'
+    ElMessage.error(message)
+  } finally {
+    passwordSaving.value = false
+  }
 }
 
 async function confirmSignOut() {
@@ -254,6 +280,8 @@ async function confirmSignOut() {
       confirmButtonText: 'Sign out',
       cancelButtonText: 'Cancel',
     })
+    websiteStore.clear()
+    await auth.logout()
     router.push('/login')
   } catch {
     /* cancelled */

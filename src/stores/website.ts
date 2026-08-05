@@ -1,14 +1,8 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
-import {
-  analyticsSeries,
-  contentBlocks as seedContent,
-  maintenanceConfig as seedMaintenance,
-  mediaItems as seedMedia,
-  submissions as seedSubmissions,
-  websitePages as seedPages,
-} from '@/data/mock'
+import { api } from '@/lib/api'
 import type {
+  AnalyticsPoint,
   ContentBlock,
   MaintenanceConfig,
   MediaItem,
@@ -18,12 +12,19 @@ import type {
 } from '@/types'
 
 export const useWebsiteStore = defineStore('website', () => {
-  const content = ref<ContentBlock[]>(structuredClone(seedContent))
-  const media = ref<MediaItem[]>(structuredClone(seedMedia))
-  const pages = ref<WebsitePage[]>(structuredClone(seedPages))
-  const maintenance = ref<MaintenanceConfig>(structuredClone(seedMaintenance))
-  const submissions = ref<Submission[]>(structuredClone(seedSubmissions))
-  const analytics = ref(structuredClone(analyticsSeries))
+  const content = ref<ContentBlock[]>([])
+  const media = ref<MediaItem[]>([])
+  const pages = ref<WebsitePage[]>([])
+  const maintenance = ref<MaintenanceConfig>({
+    enabled: false,
+    title: '',
+    message: '',
+    expectedReturn: '',
+  })
+  const submissions = ref<Submission[]>([])
+  const analytics = ref<AnalyticsPoint[]>([])
+  const loaded = ref(false)
+  const loading = ref(false)
 
   const newSubmissionCount = computed(
     () => submissions.value.filter((s) => s.status === 'new').length,
@@ -33,52 +34,86 @@ export const useWebsiteStore = defineStore('website', () => {
     () => pages.value.filter((p) => p.status === 'published').length,
   )
 
-  function updateContentBlock(id: string, value: string) {
-    const block = content.value.find((b) => b.id === id)
-    if (block) block.value = value
-  }
-
-  function setContentPublished(id: string, published: boolean) {
-    const block = content.value.find((b) => b.id === id)
-    if (block) block.published = published
-  }
-
-  function updateMaintenance(patch: Partial<MaintenanceConfig>) {
-    maintenance.value = { ...maintenance.value, ...patch }
-  }
-
-  function setSubmissionStatus(id: string, status: SubmissionStatus) {
-    const item = submissions.value.find((s) => s.id === id)
-    if (item) item.status = status
-  }
-
-  function setSubmissionNotes(id: string, notes: string) {
-    const item = submissions.value.find((s) => s.id === id)
-    if (item) item.notes = notes
-  }
-
-  function setPageStatus(id: string, status: WebsitePage['status']) {
-    const page = pages.value.find((p) => p.id === id)
-    if (page) {
-      page.status = status
-      page.updatedAt = new Date().toISOString().slice(0, 10)
+  async function fetchDashboard() {
+    loading.value = true
+    try {
+      const { data } = await api.get('/v1/dashboard')
+      content.value = data.content
+      media.value = data.media
+      pages.value = data.pages
+      maintenance.value = data.maintenance
+      submissions.value = data.submissions
+      analytics.value = data.analytics
+      loaded.value = true
+    } finally {
+      loading.value = false
     }
   }
 
-  function removeMedia(id: string) {
+  function clear() {
+    content.value = []
+    media.value = []
+    pages.value = []
+    submissions.value = []
+    analytics.value = []
+    loaded.value = false
+  }
+
+  async function updateContentBlock(id: string, value: string) {
+    const { data } = await api.patch(`/v1/content/${id}`, { value })
+    const idx = content.value.findIndex((b) => b.id === id)
+    if (idx >= 0) content.value[idx] = data.content
+  }
+
+  async function setContentPublished(id: string, published: boolean) {
+    const { data } = await api.patch(`/v1/content/${id}`, { published })
+    const idx = content.value.findIndex((b) => b.id === id)
+    if (idx >= 0) content.value[idx] = data.content
+  }
+
+  async function updateMaintenance(patch: Partial<MaintenanceConfig>) {
+    const { data } = await api.put('/v1/maintenance', patch)
+    maintenance.value = data.maintenance
+  }
+
+  async function setSubmissionStatus(id: string, status: SubmissionStatus) {
+    const { data } = await api.patch(`/v1/submissions/${id}`, { status })
+    const idx = submissions.value.findIndex((s) => s.id === id)
+    if (idx >= 0) submissions.value[idx] = data.submission
+  }
+
+  async function setSubmissionNotes(id: string, notes: string) {
+    const { data } = await api.patch(`/v1/submissions/${id}`, { notes })
+    const idx = submissions.value.findIndex((s) => s.id === id)
+    if (idx >= 0) submissions.value[idx] = data.submission
+  }
+
+  async function setPageStatus(id: string, status: WebsitePage['status']) {
+    const { data } = await api.patch(`/v1/pages/${id}`, { status })
+    const idx = pages.value.findIndex((p) => p.id === id)
+    if (idx >= 0) pages.value[idx] = data.page
+  }
+
+  async function removeMedia(id: string) {
+    await api.delete(`/v1/media/${id}`)
     media.value = media.value.filter((m) => m.id !== id)
   }
 
-  function addMedia(item: MediaItem) {
-    media.value = [item, ...media.value]
+  async function addMedia(form: FormData) {
+    const { data } = await api.post('/v1/media', form)
+    media.value = [data.media, ...media.value]
+    return data.media as MediaItem
   }
 
-  function replaceMedia(id: string, patch: Partial<MediaItem>) {
-    const item = media.value.find((m) => m.id === id)
-    if (item) Object.assign(item, patch)
+  async function replaceMedia(id: string, form: FormData) {
+    const { data } = await api.put(`/v1/media/${id}`, form)
+    const idx = media.value.findIndex((m) => m.id === id)
+    if (idx >= 0) media.value[idx] = data.media
+    return data.media as MediaItem
   }
 
-  function markAllSubmissionsRead() {
+  async function markAllSubmissionsRead() {
+    await api.post('/v1/submissions/mark-read')
     submissions.value.forEach((s) => {
       if (s.status === 'new') s.status = 'read'
     })
@@ -91,8 +126,12 @@ export const useWebsiteStore = defineStore('website', () => {
     maintenance,
     submissions,
     analytics,
+    loaded,
+    loading,
     newSubmissionCount,
     publishedPageCount,
+    fetchDashboard,
+    clear,
     updateContentBlock,
     setContentPublished,
     updateMaintenance,

@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css'
+import { useAuthStore } from '@/stores/auth'
 import { useClientStore } from '@/stores/client'
+import { useWebsiteStore } from '@/stores/website'
 import type { ModuleKey } from '@/types'
 
 NProgress.configure({ showSpinner: false })
@@ -84,11 +86,36 @@ const router = createRouter({
   scrollBehavior: () => ({ top: 0 }),
 })
 
-router.beforeEach((to, _from, next) => {
+router.beforeEach(async (to, _from, next) => {
   NProgress.start()
+  const auth = useAuthStore()
+
+  if (!auth.bootstrapped) {
+    await auth.bootstrap()
+  }
+
   if (to.meta.public) {
+    if (to.path === '/login' && auth.isAuthenticated) {
+      next('/overview')
+      return
+    }
     next()
     return
+  }
+
+  if (!auth.isAuthenticated) {
+    next({ path: '/login', query: { redirect: to.fullPath } })
+    return
+  }
+
+  const websiteStore = useWebsiteStore()
+  if (!websiteStore.loaded && !websiteStore.loading) {
+    try {
+      await websiteStore.fetchDashboard()
+    } catch {
+      next('/login')
+      return
+    }
   }
 
   const clientStore = useClientStore()

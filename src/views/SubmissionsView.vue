@@ -289,33 +289,45 @@ function formatDate(value: string, withTime = false) {
   return dayjs(value).format(withTime ? 'MMM D, YYYY h:mm A' : 'MMM D, YYYY')
 }
 
-function openDetail(row: Submission) {
+async function openDetail(row: Submission) {
   active.value = { ...row }
   notesDraft.value = row.notes || ''
   drawerOpen.value = true
   if (row.status === 'new') {
-    websiteStore.setSubmissionStatus(row.id, 'read')
+    await websiteStore.setSubmissionStatus(row.id, 'read')
     active.value = { ...row, status: 'read' }
   }
 }
 
-function updateStatus(status: SubmissionStatus) {
+async function updateStatus(status: SubmissionStatus) {
   if (!active.value) return
-  websiteStore.setSubmissionStatus(active.value.id, status)
-  active.value = { ...active.value, status }
-  ElMessage.success('Status updated')
+  try {
+    await websiteStore.setSubmissionStatus(active.value.id, status)
+    active.value = { ...active.value, status }
+    ElMessage.success('Status updated')
+  } catch {
+    ElMessage.error('Could not update status')
+  }
 }
 
-function saveNotes() {
+async function saveNotes() {
   if (!active.value) return
-  websiteStore.setSubmissionNotes(active.value.id, notesDraft.value)
-  active.value = { ...active.value, notes: notesDraft.value }
-  ElMessage.success('Notes saved')
+  try {
+    await websiteStore.setSubmissionNotes(active.value.id, notesDraft.value)
+    active.value = { ...active.value, notes: notesDraft.value }
+    ElMessage.success('Notes saved')
+  } catch {
+    ElMessage.error('Could not save notes')
+  }
 }
 
-function markAllRead() {
-  websiteStore.markAllSubmissionsRead()
-  ElMessage.success('All submissions marked as read')
+async function markAllRead() {
+  try {
+    await websiteStore.markAllSubmissionsRead()
+    ElMessage.success('All submissions marked as read')
+  } catch {
+    ElMessage.error('Could not mark submissions as read')
+  }
 }
 
 async function copyText(value: string) {

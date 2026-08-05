@@ -5,10 +5,9 @@ Website management dashboard and lightweight CRM for Blacnova Development client
 ## Stack
 
 - Vue 3 + TypeScript + Vite
-- Element Plus (vue-element-admin style layout)
+- Element Plus
 - Pinia + Vue Router
-- Apache ECharts
-- Phosphor Icons
+- Cloudflare Workers API (`blacnova-api`)
 
 ## Run
 
@@ -17,10 +16,12 @@ npm install
 npm run dev
 ```
 
-## Modular clients
+Set `VITE_API_URL` in `.env` (defaults to the deployed Worker).
 
-Edit `src/config/client.ts` and set `DEMO_CLIENT.modules` to control which sections appear in the sidebar and routes. Modules that are not enabled are hidden entirely.
+## Login
 
-## Demo login
+Use your Blacnova account on `/login`. Owner: `nic@blacnova.net`.
 
-Any email and password on `/login` will enter the dashboard.
+## Modules
+
+Sidebar modules come from the API (`website.modules`). Disabled modules are hidden from nav and routes.

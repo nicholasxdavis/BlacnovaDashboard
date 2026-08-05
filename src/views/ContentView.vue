@@ -167,15 +167,24 @@ function discard() {
 
 async function save() {
   saving.value = true
-  await new Promise((r) => setTimeout(r, 500))
-  websiteStore.content.forEach((block) => {
-    const d = draft[block.id]
-    if (!d) return
-    websiteStore.updateContentBlock(block.id, d.value)
-    websiteStore.setContentPublished(block.id, d.published)
-  })
-  saving.value = false
-  ElMessage.success('Content saved')
+  try {
+    for (const block of websiteStore.content) {
+      const d = draft[block.id]
+      if (!d) continue
+      if (d.value !== block.value) {
+        await websiteStore.updateContentBlock(block.id, d.value)
+      }
+      if (d.published !== block.published) {
+        await websiteStore.setContentPublished(block.id, d.published)
+      }
+    }
+    hydrate()
+    ElMessage.success('Content saved')
+  } catch {
+    ElMessage.error('Could not save content')
+  } finally {
+    saving.value = false
+  }
 }
 </script>
 
