@@ -10,22 +10,22 @@
     </PageHeader>
 
     <div class="surface table-scroll">
-      <el-table :data="clients" v-loading="loading" empty-text="No clients yet">
-        <el-table-column prop="name" label="Client" min-width="160" />
-        <el-table-column prop="domain" label="Domain" min-width="180">
+      <el-table :data="clients" v-loading="loading" empty-text="No clients yet" class="clients-table">
+        <el-table-column prop="name" label="Client" min-width="180" show-overflow-tooltip />
+        <el-table-column prop="domain" label="Domain" min-width="200" show-overflow-tooltip>
           <template #default="{ row }">
             <a :href="'https://' + row.domain" target="_blank" rel="noopener noreferrer">
               {{ row.domain }}
             </a>
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="Status" width="150">
+        <el-table-column prop="status" label="Status" min-width="150">
           <template #default="{ row }">
             <el-select
               :model-value="row.status"
               size="small"
-              style="width: 128px"
-              @change="(value: string) => updateStatus(row, value)"
+              class="status-select"
+              @change="statusHandler(row)"
             >
               <el-option label="Live" value="live" />
               <el-option label="Maintenance" value="maintenance" />
@@ -33,9 +33,9 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column prop="accountCount" label="Accounts" width="100" />
-        <el-table-column prop="newSubmissions" label="New leads" width="110" />
-        <el-table-column label="" width="100" align="right">
+        <el-table-column prop="accountCount" label="Accounts" min-width="110" align="center" />
+        <el-table-column prop="newSubmissions" label="New leads" min-width="120" align="center" />
+        <el-table-column label="" min-width="100" align="right" fixed="right">
           <template #default="{ row }">
             <el-button text type="danger" @click="removeClient(row)">Delete</el-button>
           </template>
@@ -123,6 +123,12 @@ async function createClient() {
   }
 }
 
+function statusHandler(row: AdminClient) {
+  return (value: string | number) => {
+    void updateStatus(row, String(value))
+  }
+}
+
 async function updateStatus(row: AdminClient, status: string) {
   if (status === row.status) return
   try {
@@ -159,3 +165,16 @@ async function removeClient(row: AdminClient) {
 
 onMounted(load)
 </script>
+
+<style scoped lang="scss">
+.clients-table {
+  :deep(th .cell) {
+    white-space: nowrap;
+  }
+
+  :deep(.status-select) {
+    width: 100%;
+    max-width: 140px;
+  }
+}
+</style>
