@@ -3,7 +3,12 @@
     <PageHeader
       title="Overview"
       description="A quick look at your website status and what needs attention."
-    />
+    >
+      <template #actions>
+        <el-button :loading="publishing" @click="publishSite">Publish to site</el-button>
+        <el-button type="primary" @click="router.push('/content')">Edit content</el-button>
+      </template>
+    </PageHeader>
 
     <div v-if="websiteStore.maintenance.enabled" class="maint-banner section">
       <PhWrench :size="18" />
@@ -122,9 +127,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { PhWrench } from '@phosphor-icons/vue'
+import { ElMessage } from 'element-plus'
 import dayjs from 'dayjs'
 import PageHeader from '@/components/PageHeader.vue'
 import MetricCard from '@/components/MetricCard.vue'
@@ -137,8 +143,17 @@ import { useWebsiteStore } from '@/stores/website'
 const router = useRouter()
 const clientStore = useClientStore()
 const websiteStore = useWebsiteStore()
+const publishing = ref(false)
 
-const latest = computed(() => websiteStore.analytics[websiteStore.analytics.length - 1])
+const latest = computed(
+  () =>
+    websiteStore.analytics[websiteStore.analytics.length - 1] || {
+      date: '',
+      visitors: 0,
+      pageviews: 0,
+      submissions: 0,
+    },
+)
 
 const draftContentCount = computed(
   () => websiteStore.content.filter((c) => !c.published).length,
@@ -149,6 +164,26 @@ const recentSubmissions = computed(() =>
     .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt))
     .slice(0, 4),
 )
+
+async function publishSite() {
+  publishing.value = true
+  try {
+    const result = await websiteStore.publishSite()
+    const changed = result.files.filter((f) => f.updated).length
+    ElMessage.success(
+      changed
+        ? `Published to GitHub — ${changed} file${changed === 1 ? '' : 's'} updated`
+        : 'Site already in sync with published content',
+    )
+  } catch (err: unknown) {
+    const message =
+      (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
+      'Publish failed'
+    ElMessage.error(message)
+  } finally {
+    publishing.value = false
+  }
+}
 
 const trafficOption = computed(() => ({
   color: ['#111111'],

@@ -86,48 +86,66 @@ const router = createRouter({
   scrollBehavior: () => ({ top: 0 }),
 })
 
+let bootPromise: Promise<boolean> | null = null
+
+async function ensureBootstrapped() {
+  const auth = useAuthStore()
+  if (auth.bootstrapped) return auth.isAuthenticated
+  if (!bootPromise) bootPromise = auth.bootstrap().finally(() => {
+    bootPromise = null
+  })
+  return bootPromise
+}
+
 router.beforeEach(async (to, _from, next) => {
   NProgress.start()
-  const auth = useAuthStore()
+  try {
+    const auth = useAuthStore()
+    await ensureBootstrapped()
 
-  if (!auth.bootstrapped) {
-    await auth.bootstrap()
-  }
+    if (to.meta.public) {
+      if (to.path === '/login' && auth.isAuthenticated) {
+        next('/overview')
+        return
+      }
+      next()
+      return
+    }
 
-  if (to.meta.public) {
-    if (to.path === '/login' && auth.isAuthenticated) {
+    if (!auth.isAuthenticated) {
+      next({ path: '/login', query: { redirect: to.fullPath } })
+      return
+    }
+
+    const websiteStore = useWebsiteStore()
+    if (!websiteStore.loaded && !websiteStore.loading) {
+      try {
+        await websiteStore.fetchDashboard()
+      } catch {
+        await auth.logout()
+        next({ path: '/login', query: { redirect: to.fullPath } })
+        return
+      }
+    }
+
+    const clientStore = useClientStore()
+    const module = to.meta.module as ModuleKey | undefined
+    if (module && !clientStore.canAccess(module)) {
       next('/overview')
       return
     }
     next()
-    return
+  } catch (err) {
+    console.error('Router guard failed', err)
+    next('/login')
   }
-
-  if (!auth.isAuthenticated) {
-    next({ path: '/login', query: { redirect: to.fullPath } })
-    return
-  }
-
-  const websiteStore = useWebsiteStore()
-  if (!websiteStore.loaded && !websiteStore.loading) {
-    try {
-      await websiteStore.fetchDashboard()
-    } catch {
-      next('/login')
-      return
-    }
-  }
-
-  const clientStore = useClientStore()
-  const module = to.meta.module as ModuleKey | undefined
-  if (module && !clientStore.canAccess(module)) {
-    next('/overview')
-    return
-  }
-  next()
 })
 
 router.afterEach(() => {
+  NProgress.done()
+})
+
+router.onError(() => {
   NProgress.done()
 })
 

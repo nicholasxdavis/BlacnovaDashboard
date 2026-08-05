@@ -6,21 +6,18 @@ import type { ClientWebsite, ModuleKey } from '@/types'
 
 const EMPTY_CLIENT: ClientWebsite = {
   id: '',
-  name: '',
-  domain: '',
+  name: 'Blacnova',
+  domain: 'www.blacnova.net',
   status: 'live',
   modules: [],
 }
 
 export const useClientStore = defineStore('client', () => {
+  const auth = useAuthStore()
   const sidebarCollapsed = ref(false)
   const mobileNavOpen = ref(false)
 
-  const client = computed<ClientWebsite>(() => {
-    const auth = useAuthStore()
-    return auth.website || EMPTY_CLIENT
-  })
-
+  const client = computed<ClientWebsite>(() => auth.website ?? EMPTY_CLIENT)
   const navItems = computed(() => getNavForClient(client.value.modules))
 
   function canAccess(module: ModuleKey) {

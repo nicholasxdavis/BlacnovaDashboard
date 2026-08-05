@@ -119,6 +119,18 @@ export const useWebsiteStore = defineStore('website', () => {
     })
   }
 
+  async function publishSite() {
+    const { data } = await api.post('/v1/publish')
+    return data as {
+      ok: boolean
+      publishedAt: string
+      blocks: number
+      files: Array<{ path: string; commitSha: string; updated: boolean }>
+      siteUrl: string
+      repo: string
+    }
+  }
+
   return {
     content,
     media,
@@ -142,5 +154,6 @@ export const useWebsiteStore = defineStore('website', () => {
     addMedia,
     replaceMedia,
     markAllSubmissionsRead,
+    publishSite,
   }
 })

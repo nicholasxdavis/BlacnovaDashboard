@@ -13,6 +13,9 @@
         <el-button type="primary" :disabled="!dirty" :loading="saving" @click="save">
           Save changes
         </el-button>
+        <el-button :loading="publishing" @click="publish">
+          Publish to site
+        </el-button>
       </template>
     </PageHeader>
 
@@ -108,6 +111,7 @@ const pageFilter = ref<string | undefined>(
   typeof route.query.page === 'string' ? route.query.page : undefined,
 )
 const saving = ref(false)
+const publishing = ref(false)
 
 type DraftBlock = { value: string; published: boolean }
 const draft = reactive<Record<string, DraftBlock>>({})
@@ -184,6 +188,30 @@ async function save() {
     ElMessage.error('Could not save content')
   } finally {
     saving.value = false
+  }
+}
+
+async function publish() {
+  if (dirty.value) {
+    ElMessage.warning('Save your changes before publishing')
+    return
+  }
+  publishing.value = true
+  try {
+    const result = await websiteStore.publishSite()
+    const changed = result.files.filter((f) => f.updated).length
+    ElMessage.success(
+      changed
+        ? `Published ${result.blocks} blocks to GitHub (${changed} file${changed === 1 ? '' : 's'} updated)`
+        : `Synced ${result.blocks} blocks — site files already up to date`,
+    )
+  } catch (err: unknown) {
+    const message =
+      (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
+      'Publish failed'
+    ElMessage.error(message)
+  } finally {
+    publishing.value = false
   }
 }
 </script>

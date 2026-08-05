@@ -7,16 +7,25 @@ const API_BASE =
 const TOKEN_KEY = 'bn-auth-token'
 
 export function getToken(): string | null {
-  return localStorage.getItem(TOKEN_KEY)
+  try {
+    return localStorage.getItem(TOKEN_KEY)
+  } catch {
+    return null
+  }
 }
 
 export function setToken(token: string | null) {
-  if (token) localStorage.setItem(TOKEN_KEY, token)
-  else localStorage.removeItem(TOKEN_KEY)
+  try {
+    if (token) localStorage.setItem(TOKEN_KEY, token)
+    else localStorage.removeItem(TOKEN_KEY)
+  } catch {
+    /* private mode / blocked storage */
+  }
 }
 
 export const api = axios.create({
   baseURL: API_BASE,
+  timeout: 30_000,
   headers: { 'Content-Type': 'application/json' },
 })
 
@@ -34,12 +43,15 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   (err) => {
-    if (err.response?.status === 401) {
-      const path = window.location.pathname
-      if (path !== '/login') {
-        setToken(null)
-        window.location.href = '/login'
-      }
+    const status = err.response?.status
+    const url = String(err.config?.url || '')
+    const onLogin = window.location.pathname === '/login'
+    const isAuthCall = url.includes('/v1/auth/login') || url.includes('/v1/auth/me')
+
+    if (status === 401 && !onLogin && !isAuthCall) {
+      setToken(null)
+      const redirect = encodeURIComponent(window.location.pathname + window.location.search)
+      window.location.href = `/login?redirect=${redirect}`
     }
     return Promise.reject(err)
   },
