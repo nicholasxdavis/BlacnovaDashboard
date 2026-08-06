@@ -89,24 +89,26 @@
           <el-table-column prop="status" label="Status" width="110" />
           <el-table-column label="" width="100" align="right">
             <template #default="{ row }">
-              <a
-                v-if="row.hostedInvoiceUrl && row.status !== 'paid' && row.status !== 'void'"
-                class="link-btn"
-                :href="row.hostedInvoiceUrl"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Pay
-              </a>
-              <a
-                v-else-if="row.hostedInvoiceUrl"
-                class="link-btn"
-                :href="row.hostedInvoiceUrl"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                View
-              </a>
+              <div class="table-actions">
+                <a
+                  v-if="row.hostedInvoiceUrl && row.status !== 'paid' && row.status !== 'void'"
+                  class="link-btn"
+                  :href="row.hostedInvoiceUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Pay
+                </a>
+                <a
+                  v-else-if="row.hostedInvoiceUrl"
+                  class="link-btn"
+                  :href="row.hostedInvoiceUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View
+                </a>
+              </div>
             </template>
           </el-table-column>
         </el-table>

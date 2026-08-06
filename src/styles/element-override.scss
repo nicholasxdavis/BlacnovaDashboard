@@ -71,9 +71,10 @@
 }
 
 .el-table .cell:has(> .el-button),
-.el-table .cell:has(> .link-btn) {
+.el-table .cell:has(> .link-btn),
+.el-table .cell:has(> .table-actions) {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   gap: 4px;
 }
@@ -293,6 +294,76 @@
 .el-message-box {
   border-radius: $bn-radius;
   border: $bn-border;
+  padding-bottom: 16px;
+}
+
+.el-message-box__status {
+  color: $bn-gray-700 !important;
+}
+
+.el-message-box__status.el-message-box-icon--warning,
+.el-message-box__status.el-message-box-icon--info,
+.el-message-box__status.el-message-box-icon--success,
+.el-message-box__status.el-message-box-icon--error {
+  color: $bn-gray-700 !important;
+}
+
+.el-message-box__btns {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+.el-message-box__btns .el-button + .el-button {
+  margin-left: 0 !important;
+}
+
+.el-message-box__btns .el-button--primary {
+  --el-button-bg-color: #{$bn-gray-700};
+  --el-button-border-color: #{$bn-gray-700};
+  --el-button-hover-bg-color: #{$bn-gray-900};
+  --el-button-hover-border-color: #{$bn-gray-900};
+  --el-button-active-bg-color: #{$bn-black};
+  --el-button-active-border-color: #{$bn-black};
+  --el-button-text-color: #{$bn-white};
+  background-color: $bn-gray-700;
+  border-color: $bn-gray-700;
+  color: $bn-white;
+}
+
+.el-dialog__footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.el-dialog__footer .el-button + .el-button {
+  margin-left: 0 !important;
+}
+
+.table-actions {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.table-actions .link-btn,
+.table-actions .el-button {
+  flex-shrink: 0;
+  margin: 0 !important;
+}
+
+.table-actions .el-button.is-text {
+  padding: 4px 8px;
+  height: auto;
 }
 
 .el-switch.is-checked .el-switch__core {

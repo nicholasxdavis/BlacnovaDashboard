@@ -49,10 +49,12 @@
           </template>
         </el-table-column>
         <el-table-column prop="accountCount" label="Accounts" width="90" align="center" />
-        <el-table-column label="" width="160" align="right" fixed="right">
+        <el-table-column label="" width="168" align="right" fixed="right">
           <template #default="{ row }">
-            <el-button text @click="openBilling(row)">Billing</el-button>
-            <el-button text type="danger" @click="removeClient(row)">Delete</el-button>
+            <div class="table-actions">
+              <el-button text @click="openBilling(row)">Billing</el-button>
+              <el-button text type="danger" @click="removeClient(row)">Delete</el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -319,7 +321,7 @@ async function removeClient(row: AdminClient) {
     await ElMessageBox.confirm(
       `Delete ${row.name} and all related accounts/content? This cannot be undone.`,
       'Delete client',
-      { type: 'warning', confirmButtonText: 'Delete' },
+      { type: 'warning', confirmButtonText: 'Delete', confirmButtonClass: 'el-button--danger' },
     )
     await api.delete(`/v1/admin/clients/${row.id}`)
     ElMessage.success('Client deleted')

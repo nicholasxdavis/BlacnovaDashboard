@@ -71,12 +71,14 @@
             {{ formatDate(row.createdAt) }}
           </template>
         </el-table-column>
-        <el-table-column label="" width="140" align="right">
+        <el-table-column label="" width="148" align="right">
           <template #default="{ row }">
-            <el-button size="small" text @click.stop="openDetail(row)">Open</el-button>
-            <el-button size="small" text type="danger" @click.stop="removeTicket(row)">
-              Delete
-            </el-button>
+            <div class="table-actions">
+              <el-button size="small" text @click.stop="openDetail(row)">Open</el-button>
+              <el-button size="small" text type="danger" @click.stop="removeTicket(row)">
+                Delete
+              </el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -314,7 +316,7 @@ async function removeTicket(row: SupportTicket) {
     await ElMessageBox.confirm(
       `Delete support ticket from ${row.userName}? This cannot be undone.`,
       'Delete ticket',
-      { type: 'warning', confirmButtonText: 'Delete' },
+      { type: 'warning', confirmButtonText: 'Delete', confirmButtonClass: 'el-button--danger' },
     )
     await api.delete(`/v1/admin/support/${row.id}`)
     tickets.value = tickets.value.filter((t) => t.id !== row.id)

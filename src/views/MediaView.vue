@@ -228,7 +228,7 @@ async function confirmDelete(id: string, name: string) {
     await ElMessageBox.confirm(
       `Remove “${name}” from the media library? This does not automatically remove it from published pages.`,
       'Remove media',
-      { confirmButtonText: 'Remove', cancelButtonText: 'Cancel', type: 'warning' },
+      { confirmButtonText: 'Remove', cancelButtonText: 'Cancel', type: 'warning', confirmButtonClass: 'el-button--danger' },
     )
     await websiteStore.removeMedia(id)
     ElMessage.success('Media removed')

@@ -36,18 +36,20 @@
             </el-table-column>
             <el-table-column prop="formatted" label="Amount" width="110" />
             <el-table-column prop="status" label="Status" width="110" />
-            <el-table-column label="" width="140" align="right">
+            <el-table-column label="" width="148" align="right">
               <template #default="{ row }">
-                <a
-                  v-if="row.hostedInvoiceUrl"
-                  class="link-btn"
-                  :href="row.hostedInvoiceUrl"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Open
-                </a>
-                <el-button text type="danger" @click="removeInvoice(row)">Delete</el-button>
+                <div class="table-actions">
+                  <a
+                    v-if="row.hostedInvoiceUrl"
+                    class="link-btn"
+                    :href="row.hostedInvoiceUrl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open
+                  </a>
+                  <el-button text type="danger" @click="removeInvoice(row)">Delete</el-button>
+                </div>
               </template>
             </el-table-column>
           </el-table>
@@ -83,15 +85,17 @@
             <el-table-column prop="lastSentOn" label="Last sent" width="120">
               <template #default="{ row }">{{ row.lastSentOn || '-' }}</template>
             </el-table-column>
-            <el-table-column label="" width="220" align="right">
+            <el-table-column label="" width="260" align="right">
               <template #default="{ row }">
-                <el-button text :loading="runningId === row.id" @click="runNow(row)">
-                  Send now
-                </el-button>
-                <el-button text @click="toggleRecurring(row)">
-                  {{ row.active ? 'Pause' : 'Resume' }}
-                </el-button>
-                <el-button text type="danger" @click="removeRecurring(row)">Delete</el-button>
+                <div class="table-actions">
+                  <el-button text :loading="runningId === row.id" @click="runNow(row)">
+                    Send now
+                  </el-button>
+                  <el-button text @click="toggleRecurring(row)">
+                    {{ row.active ? 'Pause' : 'Resume' }}
+                  </el-button>
+                  <el-button text type="danger" @click="removeRecurring(row)">Delete</el-button>
+                </div>
               </template>
             </el-table-column>
           </el-table>
@@ -378,6 +382,8 @@ async function removeRecurring(row: RecurringInvoice) {
     await ElMessageBox.confirm(`Delete recurring invoice for ${row.customerEmail}?`, 'Delete', {
       type: 'warning',
       confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel',
+      confirmButtonClass: 'el-button--danger',
     })
     await api.delete(`/v1/admin/recurring-invoices/${row.id}`)
     ElMessage.success('Deleted')
@@ -392,7 +398,12 @@ async function removeInvoice(row: DashboardInvoice) {
     await ElMessageBox.confirm(
       `Remove this invoice for ${row.customerEmail} from the portal? Open Stripe invoices will be voided when possible.`,
       'Delete invoice',
-      { type: 'warning', confirmButtonText: 'Delete' },
+      {
+        type: 'warning',
+        confirmButtonText: 'Delete',
+        cancelButtonText: 'Cancel',
+        confirmButtonClass: 'el-button--danger',
+      },
     )
     await api.delete(`/v1/admin/invoices/${row.id}`)
     ElMessage.success('Invoice deleted')
@@ -415,17 +426,5 @@ onMounted(load)
   margin: 6px 0 0;
   font-size: 12px;
   color: $bn-gray-500;
-}
-
-.link-btn {
-  font-size: 13px;
-  color: $bn-gray-700;
-  text-decoration: none;
-  margin-right: 4px;
-}
-
-.link-btn:hover {
-  color: $bn-black;
-  text-decoration: underline;
 }
 </style>

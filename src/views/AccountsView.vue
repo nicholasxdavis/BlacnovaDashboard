@@ -27,24 +27,26 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="" width="240" align="right">
+        <el-table-column label="" width="280" align="right">
           <template #default="{ row }">
-            <el-button text @click="openReset(row)">Reset password</el-button>
-            <el-button
-              v-if="row.id !== auth.user?.id"
-              text
-              @click="toggleActive(row)"
-            >
-              {{ row.active ? 'Deactivate' : 'Activate' }}
-            </el-button>
-            <el-button
-              v-if="row.id !== auth.user?.id"
-              text
-              type="danger"
-              @click="removeAccount(row)"
-            >
-              Delete
-            </el-button>
+            <div class="table-actions">
+              <el-button text @click="openReset(row)">Reset password</el-button>
+              <el-button
+                v-if="row.id !== auth.user?.id"
+                text
+                @click="toggleActive(row)"
+              >
+                {{ row.active ? 'Deactivate' : 'Activate' }}
+              </el-button>
+              <el-button
+                v-if="row.id !== auth.user?.id"
+                text
+                type="danger"
+                @click="removeAccount(row)"
+              >
+                Delete
+              </el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -216,6 +218,7 @@ async function removeAccount(row: AdminAccount) {
     await ElMessageBox.confirm(`Delete account ${row.email}?`, 'Delete account', {
       type: 'warning',
       confirmButtonText: 'Delete',
+      confirmButtonClass: 'el-button--danger',
     })
     await api.delete(`/v1/admin/accounts/${row.id}`)
     ElMessage.success('Account deleted')

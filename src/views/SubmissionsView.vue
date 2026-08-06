@@ -81,12 +81,14 @@
               {{ formatDate(row.createdAt) }}
             </template>
           </el-table-column>
-          <el-table-column label="" width="140" align="right">
+          <el-table-column label="" width="148" align="right">
             <template #default="{ row }">
-              <el-button size="small" text @click.stop="openDetail(row)">Open</el-button>
-              <el-button size="small" text type="danger" @click.stop="removeSubmission(row)">
-                Delete
-              </el-button>
+              <div class="table-actions">
+                <el-button size="small" text @click.stop="openDetail(row)">Open</el-button>
+                <el-button size="small" text type="danger" @click.stop="removeSubmission(row)">
+                  Delete
+                </el-button>
+              </div>
             </template>
           </el-table-column>
         </el-table>
@@ -340,7 +342,7 @@ async function removeSubmission(row: Submission) {
     await ElMessageBox.confirm(
       `Delete submission from ${row.name}? This cannot be undone.`,
       'Delete submission',
-      { type: 'warning', confirmButtonText: 'Delete' },
+      { type: 'warning', confirmButtonText: 'Delete', confirmButtonClass: 'el-button--danger' },
     )
     await websiteStore.removeSubmission(row.id)
     if (active.value?.id === row.id) {
