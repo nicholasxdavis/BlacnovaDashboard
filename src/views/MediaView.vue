@@ -157,12 +157,20 @@ const canSubmit = computed(() => Boolean(uploadName.value.trim() && selectedFile
 
 function formatMediaDate(value: string) {
   const raw = String(value || '').trim()
-  if (!raw) return ''
-  const d = new Date(raw.includes('T') ? raw : `${raw}T12:00:00`)
-  if (Number.isNaN(d.getTime())) return raw
-  const mm = String(d.getMonth() + 1).padStart(2, '0')
-  const dd = String(d.getDate()).padStart(2, '0')
-  const yy = String(d.getFullYear()).slice(-2)
+  if (!raw || raw === '—' || raw === '-') return ''
+
+  // Prefer YYYY-MM-DD / ISO so we never invent "today"
+  const isoDay = raw.match(/^(\d{4})-(\d{2})-(\d{2})/)
+  if (isoDay) {
+    const [, y, m, d] = isoDay
+    return `${m}/${d}/${y.slice(-2)}`
+  }
+
+  const parsed = new Date(raw)
+  if (Number.isNaN(parsed.getTime())) return ''
+  const mm = String(parsed.getMonth() + 1).padStart(2, '0')
+  const dd = String(parsed.getDate()).padStart(2, '0')
+  const yy = String(parsed.getFullYear()).slice(-2)
   return `${mm}/${dd}/${yy}`
 }
 
