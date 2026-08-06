@@ -30,6 +30,7 @@ export const useWebsiteStore = defineStore('website', () => {
   })
   const loaded = ref(false)
   const loading = ref(false)
+  let fetchPromise: Promise<void> | null = null
 
   const newSubmissionCount = computed(
     () => submissions.value.filter((s) => s.status === 'new').length,
@@ -40,20 +41,26 @@ export const useWebsiteStore = defineStore('website', () => {
   )
 
   async function fetchDashboard() {
-    loading.value = true
-    try {
-      const { data } = await api.get('/v1/dashboard')
-      content.value = data.content
-      media.value = data.media
-      pages.value = data.pages
-      maintenance.value = data.maintenance
-      submissions.value = data.submissions
-      analytics.value = data.analytics
-      if (data.deltas) deltas.value = data.deltas
-      loaded.value = true
-    } finally {
-      loading.value = false
-    }
+    if (loaded.value) return
+    if (fetchPromise) return fetchPromise
+    fetchPromise = (async () => {
+      loading.value = true
+      try {
+        const { data } = await api.get('/v1/dashboard')
+        content.value = data.content
+        media.value = data.media
+        pages.value = data.pages
+        maintenance.value = data.maintenance
+        submissions.value = data.submissions
+        analytics.value = data.analytics
+        if (data.deltas) deltas.value = data.deltas
+        loaded.value = true
+      } finally {
+        loading.value = false
+        fetchPromise = null
+      }
+    })()
+    return fetchPromise
   }
 
   function clear() {
@@ -63,6 +70,7 @@ export const useWebsiteStore = defineStore('website', () => {
     submissions.value = []
     analytics.value = []
     loaded.value = false
+    fetchPromise = null
   }
 
   async function updateContentBlock(id: string, value: string) {

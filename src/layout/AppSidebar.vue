@@ -41,7 +41,6 @@
           :to="item.path"
           class="nav-item"
           :title="showLabels ? undefined : item.label"
-          @click="clientStore.setMobileNav(false)"
         >
           <component :is="iconMap[item.icon]" :size="20" weight="regular" class="nav-item__icon" />
           <span v-show="showLabels" class="nav-item__label">{{ item.label }}</span>
@@ -218,7 +217,11 @@ const iconMap: Record<string, object> = {
   border-radius: $bn-radius-sm;
   color: rgba(255, 255, 255, 0.55);
   transition: background 0.12s ease, color 0.12s ease;
-  min-height: 38px;
+  min-height: 44px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  user-select: none;
 }
 
 .nav-item:hover {
@@ -312,6 +315,7 @@ const iconMap: Record<string, object> = {
     transform: translateX(-100%);
     width: min(288px, 86vw) !important;
     box-shadow: 8px 0 32px rgba(0, 0, 0, 0.45);
+    pointer-events: none;
   }
 
   .sidebar.is-collapsed {
@@ -320,11 +324,12 @@ const iconMap: Record<string, object> = {
 
   .sidebar.is-open {
     transform: translateX(0);
+    pointer-events: auto;
   }
 
   .sidebar.is-open .nav-item {
     justify-content: flex-start;
-    padding: 9px 12px;
+    padding: 10px 12px;
   }
 
   .sidebar.is-open .nav-item.router-link-active::before {

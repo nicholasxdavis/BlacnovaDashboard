@@ -29,6 +29,8 @@ export function useUnsavedGuard(dirty: Ref<boolean>, message?: string) {
         confirmButtonText: 'Leave',
         cancelButtonText: 'Stay',
         type: 'warning',
+        appendTo: document.body,
+        closeOnClickModal: false,
       })
       return true
     } catch {

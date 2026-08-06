@@ -48,6 +48,36 @@
     color $bn-motion-fast ease, filter $bn-motion-fast ease;
 }
 
+/* EP adds margin-left on siblings; our layouts use gap — zero the double spacing. */
+.el-button + .el-button {
+  margin-left: 0;
+}
+
+.el-button-group > .el-button + .el-button {
+  margin-left: -1px;
+}
+
+.btn-row,
+.page-header__actions,
+.detail__actions,
+.field-actions,
+.media-card__actions,
+.el-dialog__footer,
+.el-drawer__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.el-table .cell:has(> .el-button),
+.el-table .cell:has(> .link-btn) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
 .el-button--primary {
   --el-button-bg-color: #{$bn-orange};
   --el-button-border-color: #{$bn-orange};
@@ -324,10 +354,11 @@
 
   .page-header__actions {
     width: 100%;
+    justify-content: flex-start;
   }
 
   .page-header__actions .el-button {
-    flex: 1;
+    flex: 0 1 auto;
   }
 
   .ticket-form {

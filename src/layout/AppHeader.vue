@@ -119,14 +119,16 @@ async function onCommand(command: string) {
 .icon-btn {
   border: none;
   background: transparent;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: $bn-radius-sm;
   display: grid;
   place-items: center;
   cursor: pointer;
   color: rgba(255, 255, 255, 0.85);
   flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .icon-btn:hover {

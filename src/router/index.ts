@@ -6,7 +6,7 @@ import { useClientStore } from '@/stores/client'
 import { useWebsiteStore } from '@/stores/website'
 import type { ModuleKey } from '@/types'
 
-NProgress.configure({ showSpinner: false })
+NProgress.configure({ showSpinner: false, trickleSpeed: 120 })
 
 const Layout = () => import('@/layout/AppLayout.vue')
 
@@ -121,62 +121,57 @@ let bootPromise: Promise<boolean> | null = null
 async function ensureBootstrapped() {
   const auth = useAuthStore()
   if (auth.bootstrapped) return auth.isAuthenticated
-  if (!bootPromise) bootPromise = auth.bootstrap().finally(() => {
-    bootPromise = null
-  })
+  if (!bootPromise) {
+    bootPromise = auth.bootstrap().finally(() => {
+      bootPromise = null
+    })
+  }
   return bootPromise
 }
 
-router.beforeEach(async (to, _from, next) => {
+router.beforeEach(async (to) => {
   NProgress.start()
   try {
     const auth = useAuthStore()
     await ensureBootstrapped()
 
     if (to.meta.public) {
-      if (to.path === '/login' && auth.isAuthenticated) {
-        next('/overview')
-        return
-      }
-      next()
-      return
+      if (to.path === '/login' && auth.isAuthenticated) return '/overview'
+      return true
     }
 
     if (!auth.isAuthenticated) {
-      next({ path: '/login', query: { redirect: to.fullPath } })
-      return
+      return { path: '/login', query: { redirect: to.fullPath } }
     }
 
     const websiteStore = useWebsiteStore()
-    if (!websiteStore.loaded && !websiteStore.loading) {
+    if (!websiteStore.loaded) {
       try {
         await websiteStore.fetchDashboard()
       } catch {
         await auth.logout()
-        next({ path: '/login', query: { redirect: to.fullPath } })
-        return
+        return { path: '/login', query: { redirect: to.fullPath } }
       }
     }
 
     const clientStore = useClientStore()
     const module = to.meta.module as ModuleKey | undefined
-    if (to.meta.owner && !auth.isPlatform) {
-      next('/overview')
-      return
-    }
-    if (module && !clientStore.canAccess(module)) {
-      next('/overview')
-      return
-    }
-    next()
+    if (to.meta.owner && !auth.isPlatform) return '/overview'
+    if (module && !clientStore.canAccess(module)) return '/overview'
+    return true
   } catch (err) {
     console.error('Router guard failed', err)
-    next('/login')
+    NProgress.done()
+    return '/login'
   }
 })
 
-router.afterEach(() => {
+router.afterEach((_to, _from, failure) => {
   NProgress.done()
+  if (failure) {
+    // Navigation aborted (e.g. unsaved guard) — keep UI responsive.
+    console.debug('Navigation aborted', failure)
+  }
 })
 
 router.onError(() => {

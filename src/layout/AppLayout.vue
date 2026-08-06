@@ -3,15 +3,16 @@
     <div
       v-if="clientStore.mobileNavOpen"
       class="sidebar-backdrop"
+      aria-hidden="true"
       @click="clientStore.setMobileNav(false)"
     />
     <AppSidebar />
     <div class="app-main">
       <AppHeader />
       <main class="app-content">
-        <router-view v-slot="{ Component }">
-          <transition name="fade" mode="out-in">
-            <component :is="Component" />
+        <router-view v-slot="{ Component, route }">
+          <transition name="fade">
+            <component :is="Component" :key="route.path" />
           </transition>
         </router-view>
       </main>
@@ -20,20 +21,32 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted } from 'vue'
+import { computed, onMounted, onUnmounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import AppSidebar from './AppSidebar.vue'
 import AppHeader from './AppHeader.vue'
 import { useClientStore } from '@/stores/client'
 import { useBodyScrollLock, useElementPlusScrollLock } from '@/composables/useBodyScrollLock'
 
+const route = useRoute()
 const clientStore = useClientStore()
 
-const lockBackground = computed(
-  () => clientStore.mobileNavOpen && typeof window !== 'undefined' && window.innerWidth <= 900,
-)
+const lockBackground = computed(() => {
+  if (!clientStore.mobileNavOpen) return false
+  if (typeof window === 'undefined') return false
+  return window.innerWidth <= 900
+})
 
-useBodyScrollLock(lockBackground)
+useBodyScrollLock(lockBackground, 'mobile-nav')
 useElementPlusScrollLock()
+
+// Close drawer after navigation completes (don't interrupt the router-link click).
+watch(
+  () => route.fullPath,
+  () => {
+    if (clientStore.mobileNavOpen) clientStore.setMobileNav(false)
+  },
+)
 
 function onResize() {
   if (window.innerWidth > 900 && clientStore.mobileNavOpen) {
@@ -41,7 +54,7 @@ function onResize() {
   }
 }
 
-onMounted(() => window.addEventListener('resize', onResize))
+onMounted(() => window.addEventListener('resize', onResize, { passive: true }))
 onUnmounted(() => window.removeEventListener('resize', onResize))
 </script>
 
@@ -58,7 +71,6 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
   background: rgba(17, 17, 17, 0.35);
   z-index: 90;
   display: none;
-  touch-action: none;
 }
 
 .app-main {
@@ -81,7 +93,7 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
 
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.15s ease;
+  transition: opacity 0.12s ease;
 }
 
 .fade-enter-from,
@@ -100,6 +112,12 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
 
   .app-content {
     padding: 16px 16px 32px;
+  }
+
+  /* Avoid out-in stalls feeling like dead clicks on mobile. */
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: none;
   }
 }
 </style>
