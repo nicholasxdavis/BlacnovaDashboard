@@ -54,7 +54,7 @@
           </div>
           <div class="media-card__body">
             <div class="media-card__name" :title="item.name">{{ item.name }}</div>
-            <div class="media-card__meta">{{ item.size }} · {{ item.updatedAt }}</div>
+            <div class="media-card__meta">{{ formatMediaDate(item.updatedAt) }}</div>
             <div class="media-card__used">Used on {{ item.usedOn }}</div>
             <div class="media-card__actions">
               <el-button size="small" @click="openUpload(item.id)">Replace</el-button>
@@ -154,6 +154,17 @@ const filtered = computed(() => {
 })
 
 const canSubmit = computed(() => Boolean(uploadName.value.trim() && selectedFile.value))
+
+function formatMediaDate(value: string) {
+  const raw = String(value || '').trim()
+  if (!raw) return ''
+  const d = new Date(raw.includes('T') ? raw : `${raw}T12:00:00`)
+  if (Number.isNaN(d.getTime())) return raw
+  const mm = String(d.getMonth() + 1).padStart(2, '0')
+  const dd = String(d.getDate()).padStart(2, '0')
+  const yy = String(d.getFullYear()).slice(-2)
+  return `${mm}/${dd}/${yy}`
+}
 
 function openUpload(id?: string) {
   replaceId.value = id || null

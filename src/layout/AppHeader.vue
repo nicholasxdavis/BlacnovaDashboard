@@ -7,8 +7,6 @@
       <div class="header__context">
         <div class="header__site">{{ clientStore.client.name }}</div>
         <div class="header__meta">
-          <span class="status-dot" :class="statusClass">{{ statusLabel }}</span>
-          <span class="meta-sep" aria-hidden="true">·</span>
           <span class="header__domain">{{ clientStore.client.domain }}</span>
         </div>
       </div>
@@ -44,31 +42,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { PhList, PhArrowSquareOut, PhCaretDown } from '@phosphor-icons/vue'
 import { useAuthStore } from '@/stores/auth'
 import { useClientStore } from '@/stores/client'
-import { useWebsiteStore } from '@/stores/website'
 import NotifyBell from '@/components/NotifyBell.vue'
 
 const router = useRouter()
 const auth = useAuthStore()
 const clientStore = useClientStore()
-const websiteStore = useWebsiteStore()
-
-const statusLabel = computed(() => {
-  if (websiteStore.maintenance.enabled) return 'Maintenance mode'
-  if (clientStore.client.status === 'live') return 'Live'
-  if (clientStore.client.status === 'offline') return 'Offline'
-  return 'Maintenance mode'
-})
-
-const statusClass = computed(() => {
-  if (websiteStore.maintenance.enabled) return 'status-dot--warn'
-  if (clientStore.client.status === 'live') return 'status-dot--ok'
-  return 'status-dot--off'
-})
 
 function onToggleNav() {
   if (window.innerWidth <= 900) {
@@ -159,17 +141,9 @@ async function onCommand(command: string) {
   white-space: nowrap;
 }
 
-.header__meta :deep(.status-dot) {
-  color: rgba(255, 255, 255, 0.7);
-}
-
 .header__domain {
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.meta-sep {
-  color: rgba(255, 255, 255, 0.28);
 }
 
 .header-link {
