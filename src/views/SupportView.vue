@@ -71,9 +71,12 @@
             {{ formatDate(row.createdAt) }}
           </template>
         </el-table-column>
-        <el-table-column label="" width="64" align="right">
+        <el-table-column label="" width="140" align="right">
           <template #default="{ row }">
             <el-button size="small" text @click.stop="openDetail(row)">Open</el-button>
+            <el-button size="small" text type="danger" @click.stop="removeTicket(row)">
+              Delete
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -148,6 +151,9 @@
               >
                 Disregard
               </el-button>
+              <el-button type="danger" :loading="saving" @click="removeTicket(active)">
+                Delete
+              </el-button>
             </div>
           </div>
         </div>
@@ -158,7 +164,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import PageHeader from '@/components/PageHeader.vue'
 import StatusBadge from '@/components/StatusBadge.vue'
 import { api } from '@/lib/api'
@@ -289,6 +295,25 @@ async function disregard() {
     ElMessage.error('Could not disregard ticket')
   } finally {
     saving.value = false
+  }
+}
+
+async function removeTicket(row: SupportTicket) {
+  try {
+    await ElMessageBox.confirm(
+      `Delete support ticket from ${row.userName}? This cannot be undone.`,
+      'Delete ticket',
+      { type: 'warning', confirmButtonText: 'Delete' },
+    )
+    await api.delete(`/v1/admin/support/${row.id}`)
+    tickets.value = tickets.value.filter((t) => t.id !== row.id)
+    if (active.value?.id === row.id) {
+      drawerOpen.value = false
+      active.value = null
+    }
+    ElMessage.success('Ticket deleted')
+  } catch {
+    /* cancelled */
   }
 }
 

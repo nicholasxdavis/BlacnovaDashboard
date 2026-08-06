@@ -94,6 +94,11 @@ export const useWebsiteStore = defineStore('website', () => {
     if (idx >= 0) submissions.value[idx] = data.submission
   }
 
+  async function removeSubmission(id: string) {
+    await api.delete(`/v1/submissions/${id}`)
+    submissions.value = submissions.value.filter((s) => s.id !== id)
+  }
+
   async function setPageStatus(id: string, status: WebsitePage['status']) {
     const { data } = await api.patch(`/v1/pages/${id}`, { status })
     const idx = pages.value.findIndex((p) => p.id === id)
@@ -156,6 +161,7 @@ export const useWebsiteStore = defineStore('website', () => {
     updateMaintenance,
     setSubmissionStatus,
     setSubmissionNotes,
+    removeSubmission,
     setPageStatus,
     removeMedia,
     addMedia,

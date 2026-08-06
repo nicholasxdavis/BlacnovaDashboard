@@ -81,9 +81,12 @@
               {{ formatDate(row.createdAt) }}
             </template>
           </el-table-column>
-          <el-table-column label="" width="64" align="right">
+          <el-table-column label="" width="140" align="right">
             <template #default="{ row }">
               <el-button size="small" text @click.stop="openDetail(row)">Open</el-button>
+              <el-button size="small" text type="danger" @click.stop="removeSubmission(row)">
+                Delete
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -214,6 +217,9 @@
               >
                 Disregard
               </el-button>
+              <el-button size="small" type="danger" @click="removeSubmission(active)">
+                Delete
+              </el-button>
             </div>
           </div>
         </div>
@@ -226,7 +232,7 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import dayjs from 'dayjs'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import PageHeader from '@/components/PageHeader.vue'
 import StatusBadge from '@/components/StatusBadge.vue'
 import EmptyState from '@/components/EmptyState.vue'
@@ -326,6 +332,24 @@ async function disregard() {
     ElMessage.success('Submission disregarded')
   } catch {
     ElMessage.error('Could not disregard submission')
+  }
+}
+
+async function removeSubmission(row: Submission) {
+  try {
+    await ElMessageBox.confirm(
+      `Delete submission from ${row.name}? This cannot be undone.`,
+      'Delete submission',
+      { type: 'warning', confirmButtonText: 'Delete' },
+    )
+    await websiteStore.removeSubmission(row.id)
+    if (active.value?.id === row.id) {
+      drawerOpen.value = false
+      active.value = null
+    }
+    ElMessage.success('Submission deleted')
+  } catch {
+    /* cancelled or failed */
   }
 }
 

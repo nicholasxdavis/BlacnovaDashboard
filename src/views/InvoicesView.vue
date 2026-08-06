@@ -31,7 +31,7 @@
             <el-table-column prop="description" label="Description" min-width="160" />
             <el-table-column prop="formatted" label="Amount" width="110" />
             <el-table-column prop="status" label="Status" width="110" />
-            <el-table-column label="" width="100" align="right">
+            <el-table-column label="" width="140" align="right">
               <template #default="{ row }">
                 <a
                   v-if="row.hostedInvoiceUrl"
@@ -42,6 +42,7 @@
                 >
                   Open
                 </a>
+                <el-button text type="danger" @click="removeInvoice(row)">Delete</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -381,6 +382,21 @@ async function removeRecurring(row: RecurringInvoice) {
   }
 }
 
+async function removeInvoice(row: DashboardInvoice) {
+  try {
+    await ElMessageBox.confirm(
+      `Remove this invoice for ${row.customerEmail} from the portal? Open Stripe invoices will be voided when possible.`,
+      'Delete invoice',
+      { type: 'warning', confirmButtonText: 'Delete' },
+    )
+    await api.delete(`/v1/admin/invoices/${row.id}`)
+    ElMessage.success('Invoice deleted')
+    await load()
+  } catch {
+    /* cancelled */
+  }
+}
+
 onMounted(load)
 </script>
 
@@ -400,6 +416,7 @@ onMounted(load)
   font-size: 13px;
   color: $bn-gray-700;
   text-decoration: none;
+  margin-right: 4px;
 }
 
 .link-btn:hover {
