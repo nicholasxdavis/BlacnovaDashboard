@@ -2,7 +2,7 @@
   <div class="page">
     <PageHeader
       title="Finance"
-      description="Stripe balance, charges, payouts, and Buy Me a Coffee activity."
+      description="Stripe balance, charges, payouts, and Buy Me a Coffee. Client monthly fees are under Clients → Billing."
     >
       <template #actions>
         <el-button :loading="loading" @click="load">Refresh</el-button>
@@ -158,17 +158,22 @@ function formatDate(value: string) {
 async function load() {
   loading.value = true
   try {
-    const [billingRes, bmcRes] = await Promise.all([
+    const [billingRes, bmcRes] = await Promise.allSettled([
       api.get('/v1/admin/billing'),
       api.get('/v1/admin/bmc'),
     ])
-    billing.value = billingRes.data
-    bmc.value = bmcRes.data
-  } catch (err: unknown) {
-    const message =
-      (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
-      'Could not load finance'
-    ElMessage.error(message)
+    if (billingRes.status === 'fulfilled') {
+      billing.value = billingRes.value.data
+    } else {
+      billing.value = null
+      ElMessage.error('Could not load Stripe finance')
+    }
+    if (bmcRes.status === 'fulfilled') {
+      bmc.value = bmcRes.value.data
+    } else {
+      bmc.value = null
+      ElMessage.error('Could not load Buy Me a Coffee')
+    }
   } finally {
     loading.value = false
   }

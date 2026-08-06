@@ -25,6 +25,17 @@ a {
   text-decoration: none;
 }
 
+.link-btn {
+  font-size: 13px;
+  color: $bn-gray-700;
+  text-decoration: none;
+}
+
+.link-btn:hover {
+  color: $bn-black;
+  text-decoration: underline;
+}
+
 button,
 input,
 textarea,

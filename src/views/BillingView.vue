@@ -2,19 +2,38 @@
   <div class="page">
     <PageHeader
       title="Billing"
-      description="Invoices for website management with Blacnova. Bills on the 1st of each month."
+      description="Invoices for website management with Blacnova. Monthly invoices go out on the 1st."
     >
       <template #actions>
         <el-button :loading="loading" @click="load">Refresh</el-button>
       </template>
     </PageHeader>
 
+    <div v-if="auth.isPlatform" class="platform-note surface-pad">
+      Stripe balance and Buy Me a Coffee live under
+      <router-link to="/finance">Finance</router-link>.
+      Set client monthly fees under
+      <router-link to="/clients">Clients</router-link>.
+    </div>
+
     <div v-loading="loading">
       <div v-if="billing?.billingSuspended" class="suspend-banner surface-pad">
-        <div class="suspend-banner__title">Website unpublished for nonpayment</div>
+        <div class="suspend-banner__title">Your website is offline</div>
         <p>
           Two or more monthly invoices are past due. Pay open invoices below, then email
-          nic@blacnova.net to restore the site.
+          <a href="mailto:nic@blacnova.net">nic@blacnova.net</a> to restore the site.
+        </p>
+      </div>
+
+      <div
+        v-else-if="billing && !billing.billingEnabled"
+        class="info-banner surface-pad"
+      >
+        <div class="info-banner__title">Billing is not active yet</div>
+        <p>
+          When Blacnova enables monthly billing for your site, invoices will appear here and
+          by email. Questions?
+          <a href="mailto:nic@blacnova.net">nic@blacnova.net</a>
         </p>
       </div>
 
@@ -22,25 +41,29 @@
         <MetricCard
           label="Monthly fee"
           :value="billing?.billingEnabled ? billing.monthlyFeeFormatted : 'Not set'"
-          :delta="billing?.billingEnabled ? 'Due on the 1st' : 'Contact Blacnova to enable'"
+          :delta="billing?.billingEnabled ? 'Billed on the 1st' : 'Ask Blacnova to enable'"
           trend="flat"
         />
         <MetricCard
-          label="Next bill"
+          label="Next invoice"
           :value="billing?.nextBillLabel || '-'"
-          delta="UTC billing calendar"
+          delta="First of the month"
           trend="flat"
         />
         <MetricCard
           label="Past due"
           :value="billing?.missedInvoices ?? 0"
-          :delta="(billing?.missedInvoices ?? 0) >= 2 ? 'Suspension threshold' : 'Open retainers'"
+          :delta="
+            (billing?.missedInvoices ?? 0) >= 2
+              ? 'Site at risk of going offline'
+              : 'Unpaid monthly invoices'
+          "
           :trend="(billing?.missedInvoices ?? 0) > 0 ? 'down' : 'flat'"
         />
         <MetricCard
           label="Status"
           :value="statusLabel"
-          :delta="billing?.billingEmail || 'Uses account email'"
+          :delta="statusDelta"
           trend="flat"
         />
       </div>
@@ -48,7 +71,9 @@
       <div class="surface table-scroll">
         <div class="surface-pad" style="padding-bottom: 8px">
           <div class="section__title">Invoices</div>
-          <p class="section__desc">Pay open invoices online. Email copies are also sent to your billing address.</p>
+          <p class="section__desc">
+            Pay open invoices online. A copy is also emailed to your billing address.
+          </p>
         </div>
         <el-table :data="invoices" empty-text="No invoices yet">
           <el-table-column prop="createdAt" label="Date" width="150">
@@ -97,17 +122,24 @@ import { ElMessage } from 'element-plus'
 import PageHeader from '@/components/PageHeader.vue'
 import MetricCard from '@/components/MetricCard.vue'
 import { api } from '@/lib/api'
+import { useAuthStore } from '@/stores/auth'
 import type { ClientBillingSummary, DashboardInvoice } from '@/types'
 
+const auth = useAuthStore()
 const billing = ref<ClientBillingSummary | null>(null)
 const invoices = ref<DashboardInvoice[]>([])
 const loading = ref(false)
 
 const statusLabel = computed(() => {
   if (!billing.value) return '-'
-  if (billing.value.billingSuspended) return 'Suspended'
+  if (billing.value.billingSuspended) return 'Offline'
   if (!billing.value.billingEnabled) return 'Inactive'
   return 'Active'
+})
+
+const statusDelta = computed(() => {
+  if (!billing.value?.billingEnabled) return 'Waiting on Blacnova'
+  return billing.value.billingEmail || 'Uses your account email'
 })
 
 function formatDate(value: string) {
@@ -131,21 +163,39 @@ onMounted(load)
 </script>
 
 <style scoped lang="scss">
+.platform-note,
+.info-banner,
 .suspend-banner {
   margin-bottom: 20px;
-  background: $bn-gray-100;
   border: $bn-border;
   border-radius: $bn-radius;
+  font-size: 13px;
+  color: $bn-gray-700;
+
+  a {
+    color: $bn-orange;
+    text-decoration: underline;
+  }
 
   p {
     margin: 6px 0 0;
+    max-width: 62ch;
     color: $bn-gray-500;
-    font-size: 13px;
-    max-width: 60ch;
   }
 }
 
-.suspend-banner__title {
+.platform-note,
+.info-banner {
+  background: $bn-white;
+}
+
+.suspend-banner {
+  background: $bn-gray-100;
+  border-color: $bn-gray-300;
+}
+
+.suspend-banner__title,
+.info-banner__title {
   font-weight: 500;
   color: $bn-gray-900;
 }

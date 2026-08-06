@@ -39,9 +39,12 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column label="Monthly" width="100" align="right">
+        <el-table-column label="Monthly" width="120" align="right">
           <template #default="{ row }">
-            <span v-if="row.billingEnabled">${{ (row.monthlyFeeCents / 100).toFixed(0) }}</span>
+            <div v-if="row.billingEnabled">
+              ${{ (row.monthlyFeeCents / 100).toFixed(2) }}
+              <div v-if="row.billingSuspended" class="badge-off">Suspended</div>
+            </div>
             <span v-else class="muted">Off</span>
           </template>
         </el-table-column>
@@ -93,14 +96,17 @@
         <div class="ticket-form">
           <div v-if="active.billingSuspended" class="warn-note">
             Suspended for nonpayment.
-            <el-button text type="primary" :loading="saving" @click="restoreBilling">
+            <el-button text type="primary" :loading="restoring" @click="restoreBilling">
               Restore site
             </el-button>
           </div>
           <div>
             <label class="field-label">Enable monthly billing</label>
             <el-switch v-model="billingForm.enabled" />
-            <p class="hint">Invoices on the 1st (UTC). Two past-due months unpublishes the site.</p>
+            <p class="hint">
+              Invoices on the 1st (UTC) via Stripe + email. Two past-due months take the site offline.
+              Minimum fee $0.50.
+            </p>
           </div>
           <div>
             <label class="field-label">Monthly fee (USD)</label>
@@ -109,6 +115,7 @@
               :min="0"
               :step="25"
               :precision="2"
+              :disabled="!billingForm.enabled"
               style="width: 100%"
             />
           </div>
@@ -124,8 +131,18 @@
               placeholder="Defaults to primary account email"
             />
           </div>
+          <p v-if="active.lastRetainerPeriod" class="hint">
+            Last billed period: {{ active.lastRetainerPeriod }}
+          </p>
           <div class="btn-row">
             <el-button type="primary" :loading="saving" @click="saveBilling">Save</el-button>
+            <el-button
+              :disabled="!billingForm.enabled || active.billingSuspended"
+              :loading="billingNow"
+              @click="billNow"
+            >
+              Bill this month now
+            </el-button>
           </div>
         </div>
       </template>
@@ -145,6 +162,8 @@ const loading = ref(false)
 const dialogOpen = ref(false)
 const billingOpen = ref(false)
 const saving = ref(false)
+const restoring = ref(false)
+const billingNow = ref(false)
 const active = ref<AdminClient | null>(null)
 const form = reactive({ name: '', domain: '', githubRepo: '' })
 const billingForm = reactive({ enabled: false, amount: 99, name: '', email: '' })
@@ -185,8 +204,8 @@ function openBilling(row: AdminClient) {
 
 async function saveBilling() {
   if (!active.value) return
-  if (billingForm.enabled && billingForm.amount > 0 && billingForm.amount < 0.5) {
-    ElMessage.error('Monthly fee must be at least $0.50 when enabled')
+  if (billingForm.enabled && billingForm.amount < 0.5) {
+    ElMessage.error('Monthly fee must be at least $0.50 when billing is enabled')
     return
   }
   saving.value = true
@@ -210,9 +229,36 @@ async function saveBilling() {
   }
 }
 
+async function billNow() {
+  if (!active.value) return
+  billingNow.value = true
+  try {
+    const { data } = await api.patch(`/v1/admin/clients/${active.value.id}/bill-now`)
+    if (data.skipped) {
+      ElMessage.info(
+        data.skipped === 'already_billed' || data.skipped === 'period_exists'
+          ? 'Already billed for this month'
+          : `Skipped: ${data.skipped}`,
+      )
+    } else {
+      ElMessage.success('Invoice created and emailed')
+    }
+    await load()
+    const updated = clients.value.find((c) => c.id === active.value?.id)
+    if (updated) active.value = updated
+  } catch (err: unknown) {
+    const message =
+      (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
+      'Could not create invoice'
+    ElMessage.error(message)
+  } finally {
+    billingNow.value = false
+  }
+}
+
 async function restoreBilling() {
   if (!active.value) return
-  saving.value = true
+  restoring.value = true
   try {
     await api.patch(`/v1/admin/clients/${active.value.id}/restore-billing`)
     ElMessage.success('Site restored')
@@ -225,7 +271,7 @@ async function restoreBilling() {
       'Could not restore'
     ElMessage.error(message)
   } finally {
-    saving.value = false
+    restoring.value = false
   }
 }
 
@@ -310,6 +356,12 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
 .muted {
   color: $bn-gray-400;
   font-size: 13px;
+}
+
+.badge-off {
+  font-size: 11px;
+  color: $bn-gray-500;
+  margin-top: 2px;
 }
 
 .hint {
