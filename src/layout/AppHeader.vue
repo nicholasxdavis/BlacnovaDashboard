@@ -46,11 +46,13 @@ import { useRouter } from 'vue-router'
 import { PhList, PhArrowSquareOut, PhCaretDown } from '@phosphor-icons/vue'
 import { useAuthStore } from '@/stores/auth'
 import { useClientStore } from '@/stores/client'
+import { useWebsiteStore } from '@/stores/website'
 import NotifyBell from '@/components/NotifyBell.vue'
 
 const router = useRouter()
 const auth = useAuthStore()
 const clientStore = useClientStore()
+const websiteStore = useWebsiteStore()
 
 function onToggleNav() {
   if (window.innerWidth <= 900) {
