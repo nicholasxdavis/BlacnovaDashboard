@@ -6,7 +6,7 @@
       aria-label="Website"
     >
       <span class="login-back__inner">
-        <img class="login-back__mark" src="/bn.png" alt="" width="20" height="20" />
+        <img class="login-back__mark" src="/bn.png" alt="" width="28" height="28" />
         <span class="login-back__label">Website</span>
       </span>
     </a>
@@ -231,9 +231,9 @@ async function onSubmit() {
 }
 
 .login-back__mark {
-  width: 20px;
-  height: 20px;
-  border-radius: 3px;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
   object-fit: cover;
   flex-shrink: 0;
   display: block;
