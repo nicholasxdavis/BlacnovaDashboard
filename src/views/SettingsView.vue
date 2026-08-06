@@ -238,8 +238,8 @@ async function savePassword() {
     ElMessage.error('Fill in all password fields')
     return
   }
-  if (passwordForm.next.length < 4) {
-    ElMessage.error('New password must be at least 4 characters')
+  if (passwordForm.next.length < 12) {
+    ElMessage.error('New password must be at least 12 characters')
     return
   }
   if (passwordForm.next !== passwordForm.confirm) {
@@ -253,7 +253,8 @@ async function savePassword() {
     passwordForm.current = ''
     passwordForm.next = ''
     passwordForm.confirm = ''
-    ElMessage.success('Password updated')
+    ElMessage.success('Password updated — sign in again')
+    await router.push('/login')
   } catch (err: unknown) {
     const message =
       (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||

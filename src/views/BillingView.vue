@@ -21,7 +21,9 @@
         <div class="suspend-banner__title">Your website is offline</div>
         <p>
           Two or more monthly invoices are past due. Pay open invoices below, then email
-          <a href="mailto:nic@blacnova.net">nic@blacnova.net</a> to restore the site.
+          <a v-if="auth.supportEmail" :href="`mailto:${auth.supportEmail}`">{{ auth.supportEmail }}</a>
+          <template v-else>Blacnova</template>
+          to restore the site.
         </p>
       </div>
 
@@ -33,7 +35,8 @@
         <p>
           When Blacnova enables monthly billing for your site, invoices will appear here and
           by email. Questions?
-          <a href="mailto:nic@blacnova.net">nic@blacnova.net</a>
+          <a v-if="auth.supportEmail" :href="`mailto:${auth.supportEmail}`">{{ auth.supportEmail }}</a>
+          <template v-else>Contact Blacnova support</template>
         </p>
       </div>
 

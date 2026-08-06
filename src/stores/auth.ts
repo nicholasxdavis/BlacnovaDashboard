@@ -9,6 +9,7 @@ export interface AuthUser {
   name: string
   role: string
   isPlatform?: boolean
+  canAccessFinance?: boolean
 }
 
 export interface AuthPreferences {
@@ -29,17 +30,14 @@ export const useAuthStore = defineStore('auth', () => {
     submissions: true,
     maintenance: true,
   })
-  const supportEmail = ref('nic@blacnova.net')
+  const supportEmail = ref('')
   const website = ref<ClientWebsite | null>(null)
   const bootstrapped = ref(false)
   const loading = ref(false)
 
   const isAuthenticated = computed(() => Boolean(token.value && user.value))
   const isPlatform = computed(() => isPlatformRole(user.value))
-  /** Stripe / BMC Finance is Nic-only. */
-  const canAccessFinance = computed(
-    () => user.value?.email?.toLowerCase() === 'nic@blacnova.net',
-  )
+  const canAccessFinance = computed(() => Boolean(user.value?.canAccessFinance))
   const initials = computed(() => {
     if (!user.value?.name) return '?'
     return user.value.name
@@ -64,6 +62,7 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = {
       ...payload.user,
       isPlatform: isPlatformRole(payload.user),
+      canAccessFinance: Boolean(payload.user.canAccessFinance),
     }
     if (payload.preferences) {
       preferences.value = {
@@ -121,6 +120,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function changePassword(currentPassword: string, newPassword: string) {
     await api.post('/v1/auth/password', { currentPassword, newPassword })
+    await logout()
   }
 
   async function savePreferences(next: AuthPreferences) {

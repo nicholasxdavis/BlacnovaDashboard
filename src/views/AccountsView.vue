@@ -159,6 +159,10 @@ async function createAccount() {
     ElMessage.error('Fill in all fields')
     return
   }
+  if (createForm.password.length < 12) {
+    ElMessage.error('Password must be at least 12 characters')
+    return
+  }
   saving.value = true
   try {
     await api.post('/v1/admin/accounts', { ...createForm })
@@ -182,8 +186,8 @@ function openReset(row: AdminAccount) {
 }
 
 async function resetPasswordSubmit() {
-  if (!resetTarget.value || resetPassword.value.length < 4) {
-    ElMessage.error('Password must be at least 4 characters')
+  if (!resetTarget.value || resetPassword.value.length < 12) {
+    ElMessage.error('Password must be at least 12 characters')
     return
   }
   saving.value = true

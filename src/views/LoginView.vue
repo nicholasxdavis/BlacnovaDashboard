@@ -69,12 +69,21 @@
       <template v-else>
         <h1>Forgot password</h1>
         <p class="login__desc">
-          Email
-          <a class="support-email" href="mailto:nic@blacnova.net">nic@blacnova.net</a>
-          to reset your password. Include the email on your account and we'll help you get back in.
+          <template v-if="supportEmail">
+            Email
+            <a class="support-email" :href="`mailto:${supportEmail}`">{{ supportEmail }}</a>
+            to reset your password. Include the email on your account and we'll help you get back in.
+          </template>
+          <template v-else>
+            Contact Blacnova support to reset your password. Include the email on your account.
+          </template>
         </p>
-        <a class="login__submit login__submit--link" href="mailto:nic@blacnova.net">
-          Email nic@blacnova.net
+        <a
+          v-if="supportEmail"
+          class="login__submit login__submit--link"
+          :href="`mailto:${supportEmail}`"
+        >
+          Email support
         </a>
         <button type="button" class="back-link" @click="showForgot = false">
           Back to sign in
@@ -90,6 +99,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 import { useWebsiteStore } from '@/stores/website'
+import { api } from '@/lib/api'
 
 const router = useRouter()
 const route = useRoute()
@@ -103,10 +113,17 @@ const showForgot = ref(false)
 const loading = ref(false)
 const emailError = ref('')
 const passwordError = ref('')
+const supportEmail = ref('')
 
-onMounted(() => {
+onMounted(async () => {
   const remembered = localStorage.getItem('bn-remember-email')
   if (remembered) email.value = remembered
+  try {
+    const { data } = await api.get('/v1/public/meta')
+    if (data?.supportEmail) supportEmail.value = String(data.supportEmail)
+  } catch {
+    /* login still works without contact hint */
+  }
 })
 
 function validateEmail() {
