@@ -9,7 +9,7 @@
       </template>
     </PageHeader>
 
-    <div v-if="auth.isPlatform" class="platform-note surface-pad">
+    <div v-if="auth.canAccessFinance" class="platform-note surface-pad">
       Stripe balance and Buy Me a Coffee live under
       <router-link to="/finance">Finance</router-link>.
       Set client monthly fees under

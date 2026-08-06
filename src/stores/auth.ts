@@ -36,6 +36,10 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isAuthenticated = computed(() => Boolean(token.value && user.value))
   const isPlatform = computed(() => isPlatformRole(user.value))
+  /** Stripe / BMC Finance is Nic-only. */
+  const canAccessFinance = computed(
+    () => user.value?.email?.toLowerCase() === 'nic@blacnova.net',
+  )
   const initials = computed(() => {
     if (!user.value?.name) return '?'
     return user.value.name
@@ -141,6 +145,7 @@ export const useAuthStore = defineStore('auth', () => {
     loading,
     isAuthenticated,
     isPlatform,
+    canAccessFinance,
     initials,
     login,
     logout,

@@ -3,10 +3,12 @@
     <a
       class="login-back"
       href="https://www.blacnova.net"
-      aria-label="Blacnova website"
+      aria-label="Website"
     >
-      <img class="login-back__mark" src="/bn.png" alt="" width="28" height="28" />
-      <span class="login-back__label">Blacnova</span>
+      <span class="login-back__inner">
+        <img class="login-back__mark" src="/bn.png" alt="" width="20" height="20" />
+        <span class="login-back__label">Website</span>
+      </span>
     </a>
 
     <div class="login__panel">
@@ -173,18 +175,16 @@ async function onSubmit() {
   color: var(--auth-text-primary);
 }
 
-/* Website/blog-style previous-page tab — logo + Blacnova */
+/* Website/blog-style previous-page tab — icon only until hover; expanded on mobile */
 .login-back {
   position: fixed;
   top: 120px;
   left: 0;
   z-index: 60;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  height: 48px;
+  display: block;
   margin-left: -4px;
-  padding: 0 16px 0 12px;
+  height: 48px;
+  padding: 0 16px 0 10px;
   background: var(--auth-surface-raised);
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -196,26 +196,66 @@ async function onSubmit() {
   font-weight: 500;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
   transition: margin-left var(--auth-motion) ease, box-shadow var(--auth-motion) ease;
+  overflow: hidden;
 }
 
-.login-back:hover {
+.login-back:hover,
+.login-back:focus-visible {
   margin-left: 0;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
   color: #fff;
 }
 
+.login-back__inner {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  white-space: nowrap;
+}
+
 .login-back__mark {
-  width: 28px;
-  height: 28px;
-  border-radius: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
   object-fit: cover;
   flex-shrink: 0;
   display: block;
+  transition: transform var(--auth-motion) ease;
+}
+
+.login-back:hover .login-back__mark,
+.login-back:focus-visible .login-back__mark {
+  transform: translateX(2px);
 }
 
 .login-back__label {
+  max-width: 0;
+  margin-left: 0;
+  overflow: hidden;
   line-height: 1;
   letter-spacing: -0.01em;
+  opacity: 0;
+  transition: max-width var(--auth-motion) ease, margin-left var(--auth-motion) ease,
+    opacity var(--auth-motion) ease;
+}
+
+.login-back:hover .login-back__label,
+.login-back:focus-visible .login-back__label {
+  max-width: 120px;
+  margin-left: 8px;
+  opacity: 1;
+}
+
+@media (max-width: 640px) {
+  .login-back {
+    margin-left: 0;
+  }
+
+  .login-back__label {
+    max-width: 120px;
+    margin-left: 8px;
+    opacity: 1;
+  }
 }
 
 .login__panel {

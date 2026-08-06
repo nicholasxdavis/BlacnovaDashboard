@@ -163,6 +163,7 @@ router.beforeEach(async (to) => {
     const clientStore = useClientStore()
     const module = to.meta.module as ModuleKey | undefined
     if (to.meta.owner && !auth.isPlatform) return '/overview'
+    if (to.meta.module === 'finance' && !auth.canAccessFinance) return '/overview'
     if (module && !clientStore.canAccess(module)) return '/overview'
     return true
   } catch (err) {

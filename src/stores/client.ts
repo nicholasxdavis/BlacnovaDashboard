@@ -37,7 +37,7 @@ export const useClientStore = defineStore('client', () => {
 
   const client = computed<ClientWebsite>(() => auth.website ?? EMPTY_CLIENT)
   const navItems = computed(() =>
-    getNavForClient(client.value.modules, auth.isPlatform),
+    getNavForClient(client.value.modules, auth.isPlatform, auth.canAccessFinance),
   )
 
   watch(sidebarCollapsed, (collapsed) => {
@@ -45,7 +45,7 @@ export const useClientStore = defineStore('client', () => {
   })
 
   function canAccess(module: ModuleKey) {
-    return hasModule(client.value.modules, module, auth.isPlatform)
+    return hasModule(client.value.modules, module, auth.isPlatform, auth.canAccessFinance)
   }
 
   function toggleSidebar() {

@@ -38,17 +38,26 @@ export const DEMO_CLIENT: ClientWebsite = {
   modules: [],
 }
 
-export function getNavForClient(modules: ModuleKey[], isPlatform = false): NavItem[] {
+export function getNavForClient(
+  modules: ModuleKey[],
+  isPlatform = false,
+  canAccessFinance = false,
+): NavItem[] {
   const clientItems = CLIENT_NAV.filter((item) => modules.includes(item.key))
   if (!isPlatform) return clientItems
-  return [...clientItems, ...OWNER_NAV]
+  const ownerItems = OWNER_NAV.filter(
+    (item) => item.key !== 'finance' || canAccessFinance,
+  )
+  return [...clientItems, ...ownerItems]
 }
 
 export function hasModule(
   modules: ModuleKey[],
   key: ModuleKey,
   isPlatform = false,
+  canAccessFinance = false,
 ): boolean {
+  if (key === 'finance') return canAccessFinance
   if (OWNER_NAV.some((n) => n.key === key)) return isPlatform
   return modules.includes(key)
 }
