@@ -92,7 +92,12 @@
       </div>
     </div>
 
-    <el-drawer v-model="drawerOpen" title="Support ticket" size="420px" destroy-on-close>
+    <el-drawer
+      v-model="drawerOpen"
+      title="Support ticket"
+      :size="drawerSize"
+      destroy-on-close
+    >
       <template v-if="active">
         <div class="detail">
           <div class="detail__meta">
@@ -163,7 +168,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import PageHeader from '@/components/PageHeader.vue'
 import StatusBadge from '@/components/StatusBadge.vue'
@@ -199,6 +204,12 @@ const statusFilter = ref('')
 const page = ref(1)
 const pageSize = 12
 const drawerOpen = ref(false)
+const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1024)
+const drawerSize = computed(() => (windowWidth.value < 640 ? '100%' : '420px'))
+
+function onResize() {
+  windowWidth.value = window.innerWidth
+}
 const active = ref<SupportTicket | null>(null)
 const notesDraft = ref('')
 const saving = ref(false)
@@ -333,7 +344,11 @@ async function saveNotes() {
   }
 }
 
-onMounted(load)
+onMounted(() => {
+  window.addEventListener('resize', onResize, { passive: true })
+  void load()
+})
+onUnmounted(() => window.removeEventListener('resize', onResize))
 </script>
 
 <style scoped lang="scss">

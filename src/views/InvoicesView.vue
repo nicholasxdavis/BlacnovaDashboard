@@ -2,7 +2,7 @@
   <div class="page">
     <PageHeader
       title="Invoices"
-      description="Create Stripe invoices and email them via Brevo. Optional monthly recurring billing."
+      description="Ad-hoc and recurring Stripe invoices (any client). Portal retainers bill on the 1st via Clients → Billing."
     >
       <template #actions>
         <el-button @click="openRecurring">New recurring</el-button>
@@ -29,6 +29,11 @@
               </template>
             </el-table-column>
             <el-table-column prop="description" label="Description" min-width="160" />
+            <el-table-column label="Type" width="90">
+              <template #default="{ row }">
+                {{ row.kind === 'retainer' ? 'Monthly' : row.recurringId ? 'Recurring' : 'One-off' }}
+              </template>
+            </el-table-column>
             <el-table-column prop="formatted" label="Amount" width="110" />
             <el-table-column prop="status" label="Status" width="110" />
             <el-table-column label="" width="140" align="right">

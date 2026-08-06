@@ -8,6 +8,7 @@ export const CLIENT_NAV: NavItem[] = [
   { key: 'maintenance', label: 'Maintenance', path: '/maintenance', icon: 'Wrench' },
   { key: 'submissions', label: 'Submissions', path: '/submissions', icon: 'EnvelopeSimple' },
   { key: 'analytics', label: 'Analytics', path: '/analytics', icon: 'ChartLine' },
+  { key: 'billing', label: 'Billing', path: '/billing', icon: 'CurrencyDollar' },
   { key: 'settings', label: 'Settings', path: '/settings', icon: 'GearSix' },
 ]
 
@@ -15,7 +16,7 @@ export const CLIENT_NAV: NavItem[] = [
 export const OWNER_NAV: NavItem[] = [
   { key: 'clients', label: 'Clients', path: '/clients', icon: 'Buildings', ownerOnly: true },
   { key: 'accounts', label: 'Accounts', path: '/accounts', icon: 'Users', ownerOnly: true },
-  { key: 'billing', label: 'Billing', path: '/billing', icon: 'CurrencyDollar', ownerOnly: true },
+  { key: 'finance', label: 'Finance', path: '/finance', icon: 'ChartLineUp', ownerOnly: true },
   { key: 'invoices', label: 'Invoices', path: '/invoices', icon: 'Receipt', ownerOnly: true },
   {
     key: 'support',

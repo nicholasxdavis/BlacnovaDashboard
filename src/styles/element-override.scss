@@ -185,28 +185,6 @@
   border: $bn-border;
 }
 
-@media (max-width: 640px) {
-  .el-dialog {
-    width: calc(100vw - 24px) !important;
-    max-width: calc(100vw - 24px) !important;
-    margin: 6vh auto !important;
-  }
-
-  .el-dialog__body {
-    padding-left: 16px;
-    padding-right: 16px;
-  }
-
-  .el-message-box {
-    width: calc(100vw - 24px) !important;
-    max-width: calc(100vw - 24px) !important;
-  }
-
-  .el-drawer.rtl {
-    width: min(100vw, 420px) !important;
-  }
-}
-
 .el-dialog__header {
   padding-bottom: 12px;
   margin-right: 0;
@@ -346,6 +324,32 @@
   overflow: auto;
 }
 
+/* Muted delete — dark gray, not alarm red */
+.el-button--danger.is-text,
+.el-button.is-text.el-button--danger {
+  --el-button-text-color: #{$bn-gray-500};
+  --el-button-hover-text-color: #{$bn-gray-900};
+  --el-button-hover-bg-color: #{$bn-gray-100};
+  color: $bn-gray-500;
+}
+
+.el-button--danger.is-text:hover,
+.el-button.is-text.el-button--danger:hover {
+  color: $bn-gray-900;
+  background: $bn-gray-100;
+}
+
+.el-button--danger:not(.is-text):not(.is-link) {
+  --el-button-bg-color: #{$bn-gray-700};
+  --el-button-border-color: #{$bn-gray-700};
+  --el-button-hover-bg-color: #{$bn-gray-900};
+  --el-button-hover-border-color: #{$bn-gray-900};
+  --el-button-active-bg-color: #{$bn-black};
+  --el-button-active-border-color: #{$bn-black};
+  --el-button-text-color: #{$bn-white};
+  --el-button-hover-text-color: #{$bn-white};
+}
+
 @media (max-width: 640px) {
   .page-header {
     flex-direction: column;
@@ -363,5 +367,44 @@
 
   .ticket-form {
     gap: 12px;
+  }
+
+  /* Full-bleed overlays on mobile — no side gutters */
+  .el-drawer,
+  .el-drawer.rtl,
+  .el-drawer.ltr,
+  .el-drawer.ttb,
+  .el-drawer.btt {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+  }
+
+  .el-drawer__body {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .el-overlay-dialog {
+    display: flex;
+    align-items: stretch;
+    justify-content: stretch;
+    padding: 0 !important;
+  }
+
+  .el-dialog,
+  .el-dialog.bn-dialog {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    min-height: 100%;
+  }
+
+  .el-message-box {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
   }
 }

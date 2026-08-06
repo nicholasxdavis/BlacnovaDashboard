@@ -79,6 +79,7 @@ import {
   PhCurrencyDollar,
   PhReceipt,
   PhLifebuoy,
+  PhChartLineUp,
 } from '@phosphor-icons/vue'
 import { useClientStore } from '@/stores/client'
 import { useWebsiteStore } from '@/stores/website'
@@ -109,6 +110,7 @@ const iconMap: Record<string, object> = {
   CurrencyDollar: PhCurrencyDollar,
   Receipt: PhReceipt,
   Lifebuoy: PhLifebuoy,
+  ChartLineUp: PhChartLineUp,
 }
 </script>
 

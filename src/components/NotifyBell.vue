@@ -13,7 +13,7 @@
         :aria-expanded="open"
       >
         <PhBell :size="18" />
-        <span v-if="items.length" class="notify-btn__dot" aria-hidden="true" />
+        <span v-if="unreadCount" class="notify-btn__dot" aria-hidden="true" />
       </button>
     </template>
 
@@ -33,15 +33,19 @@
       <div v-if="items.length" class="notify__list">
         <button
           v-for="item in items"
-          :key="item.id"
+          :key="item.key"
           type="button"
           class="notify__item"
-          @click="openItem(item.id)"
+          @click="openItem(item)"
         >
-          <span class="notify__item-dot" aria-hidden="true" />
+          <span
+            class="notify__item-dot"
+            :class="{ 'is-muted': item.read }"
+            aria-hidden="true"
+          />
           <span>
-            <span class="notify__item-title">{{ item.name }}</span>
-            <span class="notify__item-sub">{{ item.subject }}</span>
+            <span class="notify__item-title">{{ item.title }}</span>
+            <span class="notify__item-sub">{{ item.sub }}</span>
           </span>
         </button>
       </div>
@@ -51,30 +55,99 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { PhBell } from '@phosphor-icons/vue'
+import { api } from '@/lib/api'
 import { useWebsiteStore } from '@/stores/website'
+import type { PortalNotification } from '@/types'
+
+type NotifyItem = {
+  key: string
+  title: string
+  sub: string
+  path: string
+  read: boolean
+  notificationId?: string
+  submissionId?: string
+}
 
 const router = useRouter()
 const websiteStore = useWebsiteStore()
 const open = ref(false)
+const notifications = ref<PortalNotification[]>([])
 
-const items = computed(() =>
+const submissionItems = computed<NotifyItem[]>(() =>
   websiteStore.submissions
     .filter((s) => s.status === 'new')
     .sort((a, b) => +new Date(b.createdAt) - +new Date(a.createdAt))
-    .slice(0, 5),
+    .slice(0, 5)
+    .map((s) => ({
+      key: `sub-${s.id}`,
+      title: s.name,
+      sub: s.subject,
+      path: `/submissions?id=${s.id}`,
+      read: false,
+      submissionId: s.id,
+    })),
 )
+
+const billingItems = computed<NotifyItem[]>(() =>
+  notifications.value
+    .filter((n) => !n.readAt)
+    .slice(0, 8)
+    .map((n) => ({
+      key: `ntf-${n.id}`,
+      title: n.title,
+      sub: n.body,
+      path: n.link || '/billing',
+      read: Boolean(n.readAt),
+      notificationId: n.id,
+    })),
+)
+
+const items = computed(() => [...billingItems.value, ...submissionItems.value].slice(0, 10))
+
+const unreadCount = computed(
+  () =>
+    billingItems.value.length +
+    websiteStore.submissions.filter((s) => s.status === 'new').length,
+)
+
+async function loadNotifications() {
+  try {
+    const { data } = await api.get('/v1/notifications')
+    notifications.value = data.notifications || []
+  } catch {
+    notifications.value = []
+  }
+}
 
 async function markAll() {
   await websiteStore.markAllSubmissionsRead()
+  try {
+    await api.post('/v1/notifications/read', {})
+    await loadNotifications()
+  } catch {
+    /* ignore */
+  }
 }
 
-function openItem(id: string) {
+function openItem(item: NotifyItem) {
   open.value = false
-  router.push({ path: '/submissions', query: { id } })
+  if (item.notificationId) {
+    void api.post('/v1/notifications/read', { ids: [item.notificationId] }).then(loadNotifications)
+  }
+  router.push(item.path)
 }
+
+watch(open, (v) => {
+  if (v) void loadNotifications()
+})
+
+onMounted(() => {
+  void loadNotifications()
+})
 </script>
 
 <style scoped lang="scss">
@@ -168,6 +241,10 @@ function openItem(id: string) {
   flex-shrink: 0;
 }
 
+.notify__item-dot.is-muted {
+  background: $bn-gray-300;
+}
+
 .notify__item-title {
   display: block;
   font-size: 13px;
@@ -180,6 +257,10 @@ function openItem(id: string) {
   font-size: 12px;
   color: $bn-gray-500;
   margin-top: 1px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .notify__empty {

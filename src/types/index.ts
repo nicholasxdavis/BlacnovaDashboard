@@ -6,10 +6,11 @@ export type ModuleKey =
   | 'maintenance'
   | 'submissions'
   | 'analytics'
+  | 'billing'
   | 'settings'
   | 'clients'
   | 'accounts'
-  | 'billing'
+  | 'finance'
   | 'invoices'
   | 'support'
 
@@ -98,6 +99,12 @@ export interface AdminClient {
   githubRepo: string | null
   accountCount: number
   newSubmissions: number
+  monthlyFeeCents: number
+  billingEmail: string | null
+  billingName: string | null
+  billingEnabled: boolean
+  billingSuspended: boolean
+  lastRetainerPeriod: string | null
   createdAt: string
   updatedAt: string
 }
@@ -179,12 +186,42 @@ export interface DashboardInvoice {
   formatted?: string
   description: string
   status: string
+  kind?: string
+  billingPeriod?: string | null
+  paidAt?: string | null
+  dueAt?: string | null
   hostedInvoiceUrl: string | null
   invoicePdf: string | null
   recurringId: string | null
   daysUntilDue: number
   sentAt: string | null
   error: string | null
+  createdAt: string
+}
+
+export interface ClientBillingSummary {
+  websiteId: string
+  websiteName: string
+  domain: string
+  monthlyFeeCents: number
+  monthlyFeeFormatted: string
+  billingEnabled: boolean
+  billingSuspended: boolean
+  billingEmail: string | null
+  lastRetainerPeriod: string | null
+  nextBillPeriod: string | null
+  nextBillLabel: string | null
+  missedInvoices: number
+  billsOnDay: number
+}
+
+export interface PortalNotification {
+  id: string
+  type: string
+  title: string
+  body: string
+  link: string | null
+  readAt: string | null
   createdAt: string
 }
 

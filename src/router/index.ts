@@ -65,6 +65,12 @@ const routes: RouteRecordRaw[] = [
         meta: { module: 'analytics' as ModuleKey, title: 'Analytics' },
       },
       {
+        path: 'billing',
+        name: 'Billing',
+        component: () => import('@/views/BillingView.vue'),
+        meta: { module: 'billing' as ModuleKey, title: 'Billing' },
+      },
+      {
         path: 'settings',
         name: 'Settings',
         component: () => import('@/views/SettingsView.vue'),
@@ -83,10 +89,10 @@ const routes: RouteRecordRaw[] = [
         meta: { module: 'accounts' as ModuleKey, title: 'Accounts', owner: true },
       },
       {
-        path: 'billing',
-        name: 'Billing',
-        component: () => import('@/views/BillingView.vue'),
-        meta: { module: 'billing' as ModuleKey, title: 'Billing', owner: true },
+        path: 'finance',
+        name: 'Finance',
+        component: () => import('@/views/FinanceView.vue'),
+        meta: { module: 'finance' as ModuleKey, title: 'Finance', owner: true },
       },
       {
         path: 'invoices',
