@@ -364,9 +364,9 @@ async function copyText(value: string) {
 .new-count {
   font-size: 12px;
   font-weight: 500;
-  color: $bn-orange;
-  background: $bn-orange-soft;
-  border: 1px solid $bn-orange-border;
+  color: $bn-white;
+  background: $bn-orange;
+  border: 1px solid $bn-orange;
   border-radius: 999px;
   padding: 4px 10px;
 }

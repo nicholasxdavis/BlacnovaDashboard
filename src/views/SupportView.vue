@@ -313,9 +313,13 @@ onMounted(load)
 
 <style scoped lang="scss">
 .new-count {
-  font-size: 13px;
-  color: $bn-orange;
+  font-size: 12px;
   font-weight: 500;
+  color: $bn-white;
+  background: $bn-orange;
+  border: 1px solid $bn-orange;
+  border-radius: 999px;
+  padding: 4px 10px;
 }
 
 .contact {

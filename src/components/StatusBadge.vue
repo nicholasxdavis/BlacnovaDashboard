@@ -28,6 +28,7 @@ const tone = computed(() => {
   if (props.status === 'new') return 'accent'
   if (props.status === 'in_progress') return 'muted'
   if (props.status === 'resolved') return 'ok'
+  if (props.status === 'read') return 'read'
   return 'neutral'
 })
 
@@ -57,26 +58,32 @@ const dot = computed(() => props.status === 'new')
 }
 
 .status-badge--accent {
-  color: $bn-orange;
-  background: $bn-orange-soft;
-  border-color: $bn-orange-border;
+  color: $bn-white;
+  background: $bn-orange;
+  border-color: $bn-orange;
 }
 
 .status-badge--muted {
-  color: $bn-gray-700;
-  background: $bn-gray-50;
-  border-color: $bn-gray-200;
+  color: $bn-white;
+  background: $bn-gray-700;
+  border-color: $bn-gray-700;
 }
 
 .status-badge--ok {
-  color: $bn-orange;
-  background: $bn-orange-soft;
-  border-color: $bn-orange-border;
+  color: $bn-white;
+  background: $bn-orange;
+  border-color: $bn-orange;
+}
+
+.status-badge--read {
+  color: $bn-white;
+  background: $bn-black;
+  border-color: $bn-black;
 }
 
 .status-badge--neutral {
-  color: $bn-gray-500;
-  background: $bn-white;
-  border-color: $bn-gray-200;
+  color: $bn-white;
+  background: $bn-gray-500;
+  border-color: $bn-gray-500;
 }
 </style>

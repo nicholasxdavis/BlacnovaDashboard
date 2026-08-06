@@ -31,23 +31,26 @@ const label = computed(() => {
   border-radius: 4px;
   font-size: 12px;
   font-weight: 500;
-  border: 1px solid $bn-gray-200;
-  background: $bn-white;
-  color: $bn-gray-700;
+  border: 1px solid transparent;
+  background: $bn-gray-500;
+  color: $bn-white;
 }
 
 .page-status--published {
-  color: $bn-orange;
-  background: $bn-orange-soft;
-  border-color: $bn-orange-border;
+  color: $bn-white;
+  background: $bn-orange;
+  border-color: $bn-orange;
 }
 
 .page-status--draft {
-  color: $bn-gray-700;
-  background: $bn-gray-50;
+  color: $bn-white;
+  background: $bn-gray-700;
+  border-color: $bn-gray-700;
 }
 
 .page-status--unpublished {
-  color: $bn-gray-500;
+  color: $bn-white;
+  background: $bn-gray-500;
+  border-color: $bn-gray-500;
 }
 </style>

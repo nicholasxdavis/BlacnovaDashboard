@@ -272,17 +272,18 @@ async function publish() {
   border-radius: 4px;
   display: inline-flex;
   align-items: center;
-  border: 1px solid $bn-gray-200;
+  border: 1px solid transparent;
 }
 
 .pub-pill--on {
-  color: $bn-orange;
-  background: $bn-orange-soft;
-  border-color: $bn-orange-border;
+  color: $bn-white;
+  background: $bn-orange;
+  border-color: $bn-orange;
 }
 
 .pub-pill--off {
-  color: $bn-gray-500;
-  background: $bn-white;
+  color: $bn-white;
+  background: $bn-gray-500;
+  border-color: $bn-gray-500;
 }
 </style>

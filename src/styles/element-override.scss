@@ -207,9 +207,9 @@
 }
 
 .el-tag--success {
-  --el-tag-bg-color: #{$bn-orange-soft};
-  --el-tag-border-color: #{$bn-orange-border};
-  --el-tag-text-color: #{$bn-orange};
+  --el-tag-bg-color: #{$bn-orange};
+  --el-tag-border-color: #{$bn-orange};
+  --el-tag-text-color: #{$bn-white};
 }
 
 .el-tag--info {
