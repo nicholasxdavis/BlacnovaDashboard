@@ -227,43 +227,54 @@
   --el-tag-text-color: #{$bn-gray-700};
 }
 
-.el-message--success {
-  --el-message-bg-color: #{$bn-orange-soft} !important;
-  --el-message-border-color: #{$bn-orange-border} !important;
-  --el-message-text-color: #{$bn-orange-active} !important;
-  background-color: $bn-orange-soft !important;
-  border-color: $bn-orange-border !important;
+.el-message {
+  --el-message-bg-color: #{$bn-black} !important;
+  --el-message-border-color: #{$bn-black} !important;
+  --el-message-text-color: #{$bn-white} !important;
+  background-color: #000 !important;
+  border-color: #000 !important;
+  border-width: 0 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
 }
 
-.el-message--success .el-message__content {
-  color: $bn-orange-active !important;
+.el-message .el-message__content {
+  color: $bn-white !important;
+}
+
+.el-message .el-message__icon,
+.el-message .el-icon,
+.el-message .el-message__closeBtn {
+  color: $bn-white !important;
+}
+
+.el-message--success,
+.el-message--info,
+.el-message--warning,
+.el-message--error {
+  --el-message-bg-color: #{$bn-black} !important;
+  --el-message-border-color: #{$bn-black} !important;
+  --el-message-text-color: #{$bn-white} !important;
+  background-color: #000 !important;
+  border-color: #000 !important;
+  border-width: 0 !important;
+}
+
+.el-message--success .el-message__content,
+.el-message--info .el-message__content,
+.el-message--warning .el-message__content,
+.el-message--error .el-message__content {
+  color: $bn-white !important;
 }
 
 .el-message--success .el-message__icon,
-.el-message--success .el-icon {
-  color: $bn-orange !important;
-}
-
-.el-message--info {
-  --el-message-bg-color: #{$bn-gray-50} !important;
-  --el-message-border-color: #{$bn-gray-200} !important;
-  --el-message-text-color: #{$bn-gray-700} !important;
-}
-
+.el-message--success .el-icon,
 .el-message--info .el-message__icon,
-.el-message--info .el-icon {
-  color: $bn-orange !important;
-}
-
-.el-message--warning {
-  --el-message-bg-color: #{$bn-orange-soft} !important;
-  --el-message-border-color: #{$bn-orange-border} !important;
-  --el-message-text-color: #{$bn-orange-active} !important;
-}
-
+.el-message--info .el-icon,
 .el-message--warning .el-message__icon,
-.el-message--warning .el-icon {
-  color: $bn-orange !important;
+.el-message--warning .el-icon,
+.el-message--error .el-message__icon,
+.el-message--error .el-icon {
+  color: $bn-white !important;
 }
 
 .el-notification--success {
