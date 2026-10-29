@@ -199,6 +199,12 @@ onMounted(load)
   border-color: $bn-gray-300;
 }
 
+@media (max-width: $bn-bp-mobile) {
+  .platform-note {
+    display: none;
+  }
+}
+
 .suspend-banner__title,
 .info-banner__title {
   font-weight: 500;

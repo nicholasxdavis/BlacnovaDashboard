@@ -2,7 +2,8 @@
   <el-popover
     v-model:visible="open"
     placement="bottom-end"
-    :width="320"
+    :width="notifyWidth"
+    popper-class="bn-notify-popper"
     trigger="click"
   >
     <template #reference>
@@ -55,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { PhBell } from '@phosphor-icons/vue'
 import { api } from '@/lib/api'
@@ -76,6 +77,12 @@ const router = useRouter()
 const websiteStore = useWebsiteStore()
 const open = ref(false)
 const notifications = ref<PortalNotification[]>([])
+const viewport = ref(typeof window !== 'undefined' ? window.innerWidth : 1200)
+const notifyWidth = computed(() => Math.min(320, Math.max(240, viewport.value - 24)))
+
+function onResize() {
+  viewport.value = window.innerWidth
+}
 
 const submissionItems = computed<NotifyItem[]>(() =>
   websiteStore.submissions
@@ -146,7 +153,13 @@ watch(open, (v) => {
 })
 
 onMounted(() => {
+  onResize()
+  window.addEventListener('resize', onResize, { passive: true })
   void loadNotifications()
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', onResize)
 })
 </script>
 

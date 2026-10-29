@@ -13,10 +13,9 @@
       <el-table :data="accounts" v-loading="loading" empty-text="No accounts yet" style="width: 100%">
         <el-table-column prop="name" label="Name" min-width="120" />
         <el-table-column prop="email" label="Email" width="200" show-overflow-tooltip />
-        <el-table-column label="Website" width="150" show-overflow-tooltip>
+        <el-table-column label="Website" min-width="160" show-overflow-tooltip>
           <template #default="{ row }">
-            <div>{{ row.websiteName || '-' }}</div>
-            <div class="muted">{{ row.websiteDomain }}</div>
+            {{ domainLabel(row.websiteDomain) }}
           </template>
         </el-table-column>
         <el-table-column prop="role" label="Role" width="100" />
@@ -27,26 +26,28 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="" width="280" align="right">
+        <el-table-column label="" width="56" align="right" fixed="right">
           <template #default="{ row }">
-            <div class="table-actions">
-              <el-button text @click="openReset(row)">Reset password</el-button>
-              <el-button
-                v-if="row.id !== auth.user?.id"
-                text
-                @click="toggleActive(row)"
-              >
-                {{ row.active ? 'Deactivate' : 'Activate' }}
-              </el-button>
-              <el-button
-                v-if="row.id !== auth.user?.id"
-                text
-                type="danger"
-                @click="removeAccount(row)"
-              >
-                Delete
-              </el-button>
-            </div>
+            <el-dropdown trigger="click" @command="(cmd: string) => onAccountMenu(cmd, row)">
+              <button class="row-menu-btn" type="button" aria-label="Account actions" @click.stop>
+                <PhDotsThreeVertical :size="18" />
+              </button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item command="reset">Reset password</el-dropdown-item>
+                  <el-dropdown-item v-if="row.id !== auth.user?.id" command="toggle">
+                    {{ row.active ? 'Deactivate' : 'Activate' }}
+                  </el-dropdown-item>
+                  <el-dropdown-item
+                    v-if="row.id !== auth.user?.id"
+                    divided
+                    command="delete"
+                  >
+                    Delete
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
@@ -76,7 +77,7 @@
             <el-option
               v-for="c in clients"
               :key="c.id"
-              :label="`${c.name} (${c.domain})`"
+              :label="domainLabel(c.domain)"
               :value="c.id"
             />
           </el-select>
@@ -111,8 +112,10 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { PhDotsThreeVertical } from '@phosphor-icons/vue'
 import PageHeader from '@/components/PageHeader.vue'
 import { api } from '@/lib/api'
+import { domainLabel } from '@/lib/display'
 import { useAuthStore } from '@/stores/auth'
 import type { AdminAccount, AdminClient } from '@/types'
 
@@ -196,6 +199,20 @@ async function createAccount() {
   }
 }
 
+function onAccountMenu(command: string, row: AdminAccount) {
+  if (command === 'reset') {
+    openReset(row)
+    return
+  }
+  if (command === 'toggle') {
+    void toggleActive(row)
+    return
+  }
+  if (command === 'delete') {
+    void removeAccount(row)
+  }
+}
+
 function openReset(row: AdminAccount) {
   resetTarget.value = row
   resetPassword.value = ''
@@ -253,11 +270,6 @@ onMounted(load)
 </script>
 
 <style scoped lang="scss">
-.muted {
-  font-size: 12px;
-  color: $bn-gray-500;
-}
-
 .check-row {
   display: flex;
   align-items: center;

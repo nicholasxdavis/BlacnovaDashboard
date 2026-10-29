@@ -56,9 +56,9 @@
                 <div class="muted">{{ row.customerEmail }}</div>
               </template>
             </el-table-column>
-            <el-table-column label="Website" min-width="140">
+            <el-table-column label="Website" min-width="140" show-overflow-tooltip>
               <template #default="{ row }">
-                {{ row.websiteName || '-' }}
+                {{ domainLabel(row.websiteDomain) }}
               </template>
             </el-table-column>
             <el-table-column prop="description" label="Description" min-width="160" />
@@ -69,20 +69,19 @@
             </el-table-column>
             <el-table-column prop="formatted" label="Amount" width="110" />
             <el-table-column prop="status" label="Status" width="110" />
-            <el-table-column label="" width="148" align="right">
+            <el-table-column label="" width="56" align="right" fixed="right">
               <template #default="{ row }">
-                <div class="table-actions">
-                  <a
-                    v-if="row.hostedInvoiceUrl"
-                    class="link-btn"
-                    :href="row.hostedInvoiceUrl"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Open
-                  </a>
-                  <el-button text type="danger" @click="removeInvoice(row)">Delete</el-button>
-                </div>
+                <el-dropdown trigger="click" @command="(cmd: string) => onInvoiceMenu(cmd, row)">
+                  <button class="row-menu-btn" type="button" aria-label="Invoice actions" @click.stop>
+                    <PhDotsThreeVertical :size="18" />
+                  </button>
+                  <template #dropdown>
+                    <el-dropdown-menu>
+                      <el-dropdown-item v-if="row.hostedInvoiceUrl" command="open">Open</el-dropdown-item>
+                      <el-dropdown-item divided command="delete">Delete</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
               </template>
             </el-table-column>
           </el-table>
@@ -98,8 +97,8 @@
                 <div class="muted">{{ row.customerEmail }}</div>
               </template>
             </el-table-column>
-            <el-table-column label="Website" min-width="140">
-              <template #default="{ row }">{{ row.websiteName || '-' }}</template>
+            <el-table-column label="Website" min-width="140" show-overflow-tooltip>
+              <template #default="{ row }">{{ domainLabel(row.websiteDomain) }}</template>
             </el-table-column>
             <el-table-column prop="description" label="Description" min-width="150" />
             <el-table-column prop="formatted" label="Amount" width="110" />
@@ -118,17 +117,22 @@
             <el-table-column prop="lastSentOn" label="Last sent" width="120">
               <template #default="{ row }">{{ row.lastSentOn || '-' }}</template>
             </el-table-column>
-            <el-table-column label="" width="260" align="right">
+            <el-table-column label="" width="56" align="right" fixed="right">
               <template #default="{ row }">
-                <div class="table-actions">
-                  <el-button text :loading="runningId === row.id" @click="runNow(row)">
-                    Send now
-                  </el-button>
-                  <el-button text @click="toggleRecurring(row)">
-                    {{ row.active ? 'Pause' : 'Resume' }}
-                  </el-button>
-                  <el-button text type="danger" @click="removeRecurring(row)">Delete</el-button>
-                </div>
+                <el-dropdown trigger="click" @command="(cmd: string) => onRecurringMenu(cmd, row)">
+                  <button class="row-menu-btn" type="button" aria-label="Recurring invoice actions" @click.stop>
+                    <PhDotsThreeVertical :size="18" />
+                  </button>
+                  <template #dropdown>
+                    <el-dropdown-menu>
+                      <el-dropdown-item command="send">Send now</el-dropdown-item>
+                      <el-dropdown-item command="toggle">
+                        {{ row.active ? 'Pause' : 'Resume' }}
+                      </el-dropdown-item>
+                      <el-dropdown-item divided command="delete">Delete</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
               </template>
             </el-table-column>
           </el-table>
@@ -165,7 +169,7 @@
             <el-option
               v-for="c in clients"
               :key="c.id"
-              :label="`${c.name} (${c.domain})`"
+              :label="domainLabel(c.domain)"
               :value="c.id"
             />
           </el-select>
@@ -222,7 +226,7 @@
             <el-option
               v-for="c in clients"
               :key="c.id"
-              :label="`${c.name} (${c.domain})`"
+              :label="domainLabel(c.domain)"
               :value="c.id"
             />
           </el-select>
@@ -244,9 +248,11 @@
 import { onMounted, reactive, ref } from 'vue'
 import dayjs from 'dayjs'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { PhDotsThreeVertical } from '@phosphor-icons/vue'
 import PageHeader from '@/components/PageHeader.vue'
 import MetricCard from '@/components/MetricCard.vue'
 import { api } from '@/lib/api'
+import { domainLabel } from '@/lib/display'
 import type { AdminClient, DashboardInvoice, InvoiceSummary, RecurringInvoice } from '@/types'
 
 defineProps<{
@@ -387,6 +393,30 @@ async function createRecurring() {
     ElMessage.error(message)
   } finally {
     saving.value = false
+  }
+}
+
+function onInvoiceMenu(command: string, row: DashboardInvoice) {
+  if (command === 'open' && row.hostedInvoiceUrl) {
+    window.open(row.hostedInvoiceUrl, '_blank', 'noopener,noreferrer')
+    return
+  }
+  if (command === 'delete') {
+    void removeInvoice(row)
+  }
+}
+
+function onRecurringMenu(command: string, row: RecurringInvoice) {
+  if (command === 'send') {
+    void runNow(row)
+    return
+  }
+  if (command === 'toggle') {
+    void toggleRecurring(row)
+    return
+  }
+  if (command === 'delete') {
+    void removeRecurring(row)
   }
 }
 

@@ -109,7 +109,7 @@
           <div>
             <label class="field-label" for="ticket-topic">Topic</label>
             <el-select id="ticket-topic" v-model="ticket.topic" style="width: 100%">
-              <el-option label="Website content help" value="content" />
+              <el-option label="Website help" value="content" />
               <el-option label="Technical issue" value="technical" />
               <el-option label="Billing or account" value="billing" />
               <el-option label="Something else" value="other" />
@@ -184,7 +184,7 @@ onMounted(() => {
 })
 
 const ticket = reactive({
-  topic: 'content',
+  topic: 'technical',
   message: '',
 })
 const ticketSending = ref(false)

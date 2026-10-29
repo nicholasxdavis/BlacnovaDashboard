@@ -377,6 +377,27 @@
   height: auto;
 }
 
+.row-menu-btn {
+  border: none;
+  background: transparent;
+  width: 32px;
+  height: 32px;
+  border-radius: $bn-radius-sm;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: $bn-gray-700;
+}
+
+.row-menu-btn:hover {
+  background: $bn-gray-100;
+  color: $bn-black;
+}
+
+.bn-notify-popper {
+  max-width: calc(100vw - 16px) !important;
+}
+
 .el-switch.is-checked .el-switch__core {
   background-color: $bn-orange;
   border-color: $bn-orange;

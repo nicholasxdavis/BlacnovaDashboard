@@ -50,10 +50,9 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column label="Website" width="160" show-overflow-tooltip>
+        <el-table-column label="Website" width="170" show-overflow-tooltip>
           <template #default="{ row }">
-            <div>{{ row.websiteName }}</div>
-            <div class="muted">{{ row.websiteDomain }}</div>
+            {{ domainLabel(row.websiteDomain) }}
           </template>
         </el-table-column>
         <el-table-column prop="topic" label="Topic" width="140" show-overflow-tooltip>
@@ -71,14 +70,19 @@
             {{ formatDate(row.createdAt) }}
           </template>
         </el-table-column>
-        <el-table-column label="" width="148" align="right">
+        <el-table-column label="" width="56" align="right" fixed="right">
           <template #default="{ row }">
-            <div class="table-actions">
-              <el-button size="small" text @click.stop="openDetail(row)">Open</el-button>
-              <el-button size="small" text type="danger" @click.stop="removeTicket(row)">
-                Delete
-              </el-button>
-            </div>
+            <el-dropdown trigger="click" @command="(cmd: string) => onTicketMenu(cmd, row)">
+              <button class="row-menu-btn" type="button" aria-label="Ticket actions" @click.stop>
+                <PhDotsThreeVertical :size="18" />
+              </button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item command="open">Open</el-dropdown-item>
+                  <el-dropdown-item divided command="delete">Delete</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
@@ -110,8 +114,7 @@
             </div>
             <div>
               <div class="field-label">Website</div>
-              <div class="detail__value">{{ active.websiteName }}</div>
-              <div class="muted">{{ active.websiteDomain }}</div>
+              <div class="detail__value">{{ domainLabel(active.websiteDomain) }}</div>
             </div>
             <div>
               <div class="field-label">Topic</div>
@@ -172,9 +175,11 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { PhDotsThreeVertical } from '@phosphor-icons/vue'
 import PageHeader from '@/components/PageHeader.vue'
 import StatusBadge from '@/components/StatusBadge.vue'
 import { api } from '@/lib/api'
+import { domainLabel } from '@/lib/display'
 import type { SubmissionStatus } from '@/types'
 
 interface SupportTicket {
@@ -193,7 +198,7 @@ interface SupportTicket {
 }
 
 const TOPIC_LABELS: Record<string, string> = {
-  content: 'Website content help',
+  content: 'Website help',
   technical: 'Technical issue',
   billing: 'Billing or account',
   other: 'Something else',
@@ -279,6 +284,16 @@ async function openDetail(row: SupportTicket) {
     } catch {
       /* ignore */
     }
+  }
+}
+
+function onTicketMenu(command: string, row: SupportTicket) {
+  if (command === 'open') {
+    void openDetail(row)
+    return
+  }
+  if (command === 'delete') {
+    void removeTicket(row)
   }
 }
 

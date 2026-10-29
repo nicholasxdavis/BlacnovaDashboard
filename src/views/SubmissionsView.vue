@@ -81,14 +81,19 @@
               {{ formatDate(row.createdAt) }}
             </template>
           </el-table-column>
-          <el-table-column label="" width="148" align="right">
+          <el-table-column label="" width="56" align="right" fixed="right">
             <template #default="{ row }">
-              <div class="table-actions">
-                <el-button size="small" text @click.stop="openDetail(row)">Open</el-button>
-                <el-button size="small" text type="danger" @click.stop="removeSubmission(row)">
-                  Delete
-                </el-button>
-              </div>
+              <el-dropdown trigger="click" @command="(cmd: string) => onSubmissionMenu(cmd, row)">
+                <button class="row-menu-btn" type="button" aria-label="Submission actions" @click.stop>
+                  <PhDotsThreeVertical :size="18" />
+                </button>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item command="open">Open</el-dropdown-item>
+                    <el-dropdown-item divided command="delete">Delete</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
             </template>
           </el-table-column>
         </el-table>
@@ -235,6 +240,7 @@ import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import dayjs from 'dayjs'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { PhDotsThreeVertical } from '@phosphor-icons/vue'
 import PageHeader from '@/components/PageHeader.vue'
 import StatusBadge from '@/components/StatusBadge.vue'
 import EmptyState from '@/components/EmptyState.vue'
@@ -302,6 +308,16 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
 
 function formatDate(value: string, withTime = false) {
   return dayjs(value).format(withTime ? 'MMM D, YYYY h:mm A' : 'MMM D, YYYY')
+}
+
+function onSubmissionMenu(command: string, row: Submission) {
+  if (command === 'open') {
+    void openDetail(row)
+    return
+  }
+  if (command === 'delete') {
+    void removeSubmission(row)
+  }
 }
 
 async function openDetail(row: Submission) {

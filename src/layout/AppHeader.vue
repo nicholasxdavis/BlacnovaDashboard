@@ -10,12 +10,6 @@
       >
         <PhList :size="20" />
       </button>
-      <div class="header__context">
-        <div class="header__site">{{ clientStore.client.name }}</div>
-        <div class="header__meta">
-          <span class="header__domain">{{ clientStore.client.domain }}</span>
-        </div>
-      </div>
       <div class="header__page">{{ pageTitle }}</div>
     </div>
 
@@ -133,36 +127,8 @@ async function onCommand(command: string) {
   color: $bn-white;
 }
 
-.header__context {
-  min-width: 0;
-}
-
-.header__site {
-  font-size: 14px;
-  font-weight: 500;
-  color: $bn-white;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.header__meta {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.55);
-  margin-top: 1px;
-  white-space: nowrap;
-}
-
-.header__domain {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .header__page {
-  display: none;
+  min-width: 0;
   font-size: 15px;
   font-weight: 500;
   color: $bn-white;
@@ -251,14 +217,6 @@ async function onCommand(command: string) {
   .header__left,
   .header__right {
     gap: 6px;
-  }
-
-  .header__context {
-    display: none;
-  }
-
-  .header__page {
-    display: block;
   }
 
   .user-name,
