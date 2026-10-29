@@ -373,7 +373,7 @@ async function confirmSignOut() {
 }
 
 a {
-  color: $bn-orange;
+  color: $bn-black;
 }
 
 a:hover {

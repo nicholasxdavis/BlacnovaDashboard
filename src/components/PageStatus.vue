@@ -38,8 +38,8 @@ const label = computed(() => {
 
 .page-status--published {
   color: $bn-white;
-  background: $bn-orange;
-  border-color: $bn-orange;
+  background: $bn-black;
+  border-color: $bn-black;
 }
 
 .page-status--draft {

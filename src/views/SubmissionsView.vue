@@ -253,7 +253,7 @@ const active = ref<Submission | null>(null)
 const notesDraft = ref('')
 const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1200)
 
-const drawerSize = computed(() => (windowWidth.value < 640 ? '100%' : '420px'))
+const drawerSize = computed(() => (windowWidth.value <= 900 ? '100%' : '420px'))
 
 const filtered = computed(() => {
   const q = search.value.trim().toLowerCase()
@@ -495,7 +495,7 @@ async function copyText(value: string) {
 }
 
 .detail__link:hover {
-  color: $bn-orange;
+  color: $bn-black;
 }
 
 .detail__message {
@@ -577,7 +577,7 @@ async function copyText(value: string) {
   cursor: pointer;
 }
 
-@media (max-width: 768px) {
+@media (max-width: $bn-bp-mobile) {
   .desktop-only {
     display: none;
   }

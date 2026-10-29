@@ -273,6 +273,13 @@ async function confirmDelete(id: string, name: string) {
   gap: 12px;
 }
 
+@media (max-width: $bn-bp-mobile) {
+  .media-grid {
+    grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+    gap: 10px;
+  }
+}
+
 .media-skel__body {
   padding: 12px 14px 14px;
   display: flex;

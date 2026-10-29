@@ -10,7 +10,7 @@
     </PageHeader>
 
     <div v-if="auth.canAccessFinance" class="platform-note surface-pad">
-      Stripe balance and Buy Me a Coffee live under
+      Stripe, client invoices, and Buy Me a Coffee live under
       <router-link to="/finance">Finance</router-link>.
       Set client monthly fees under
       <router-link to="/clients">Clients</router-link>.
@@ -178,7 +178,7 @@ onMounted(load)
   color: $bn-gray-700;
 
   a {
-    color: $bn-orange;
+    color: $bn-black;
     text-decoration: underline;
   }
 

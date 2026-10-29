@@ -1,7 +1,13 @@
 <template>
   <header class="header">
     <div class="header__left">
-      <button class="icon-btn" type="button" aria-label="Toggle navigation" @click="onToggleNav">
+      <button
+        class="icon-btn"
+        type="button"
+        :aria-label="clientStore.mobileNavOpen ? 'Close navigation' : 'Open navigation'"
+        :aria-expanded="clientStore.mobileNavOpen"
+        @click="onToggleNav"
+      >
         <PhList :size="20" />
       </button>
       <div class="header__context">
@@ -10,6 +16,7 @@
           <span class="header__domain">{{ clientStore.client.domain }}</span>
         </div>
       </div>
+      <div class="header__page">{{ pageTitle }}</div>
     </div>
 
     <div class="header__right">
@@ -42,17 +49,21 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
+import { computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { PhList, PhArrowSquareOut, PhCaretDown } from '@phosphor-icons/vue'
 import { useAuthStore } from '@/stores/auth'
 import { useClientStore } from '@/stores/client'
 import { useWebsiteStore } from '@/stores/website'
 import NotifyBell from '@/components/NotifyBell.vue'
 
+const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 const clientStore = useClientStore()
 const websiteStore = useWebsiteStore()
+
+const pageTitle = computed(() => (typeof route.meta.title === 'string' ? route.meta.title : 'Dashboard'))
 
 function onToggleNav() {
   if (window.innerWidth <= 900) {
@@ -84,6 +95,8 @@ async function onCommand(command: string) {
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
+  padding-left: max(20px, env(safe-area-inset-left));
+  padding-right: max(20px, env(safe-area-inset-right));
   gap: 16px;
   position: sticky;
   top: 0;
@@ -144,6 +157,16 @@ async function onCommand(command: string) {
 }
 
 .header__domain {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header__page {
+  display: none;
+  font-size: 15px;
+  font-weight: 500;
+  color: $bn-white;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -217,9 +240,11 @@ async function onCommand(command: string) {
   border-color: $bn-black;
 }
 
-@media (max-width: 720px) {
+@media (max-width: $bn-bp-mobile) {
   .header {
     padding: 0 12px;
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
     gap: 8px;
   }
 
@@ -228,17 +253,17 @@ async function onCommand(command: string) {
     gap: 6px;
   }
 
+  .header__context {
+    display: none;
+  }
+
+  .header__page {
+    display: block;
+  }
+
   .user-name,
   .header-link span,
   .user-caret {
-    display: none;
-  }
-
-  .header__domain {
-    display: none;
-  }
-
-  .meta-sep {
     display: none;
   }
 

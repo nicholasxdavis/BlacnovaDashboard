@@ -207,7 +207,7 @@ const page = ref(1)
 const pageSize = 12
 const drawerOpen = ref(false)
 const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1024)
-const drawerSize = computed(() => (windowWidth.value < 640 ? '100%' : '420px'))
+const drawerSize = computed(() => (windowWidth.value <= 900 ? '100%' : '420px'))
 
 function onResize() {
   windowWidth.value = window.innerWidth
@@ -428,7 +428,7 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
 }
 
 .detail__link {
-  color: $bn-orange;
+  color: $bn-black;
   font-size: 13px;
 }
 

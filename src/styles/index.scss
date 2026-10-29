@@ -12,12 +12,18 @@ body,
   margin: 0;
   padding: 0;
   min-height: 100%;
+  min-height: 100dvh;
   font-family: $bn-font;
   font-size: 14px;
   line-height: 1.5;
   color: $bn-gray-900;
   background: $bn-gray-50;
   -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  overflow-x: clip;
 }
 
 a {
@@ -175,7 +181,7 @@ p {
 }
 
 .metric__value--accent {
-  color: $bn-orange;
+  color: $bn-black;
 }
 
 .metric__delta {
@@ -185,7 +191,7 @@ p {
 }
 
 .metric__delta--up {
-  color: $bn-orange;
+  color: $bn-gray-700;
 }
 
 .metric__delta--down {
@@ -210,7 +216,7 @@ p {
 }
 
 .status-dot--ok::before {
-  background: $bn-orange;
+  background: $bn-black;
 }
 
 .status-dot--warn::before {
@@ -323,9 +329,43 @@ p {
   gap: 16px;
 }
 
-@media (max-width: 900px) {
+@media (max-width: $bn-bp-mobile) {
   .split-layout {
     grid-template-columns: 1fr;
+  }
+
+  .page-header {
+    margin-bottom: 16px;
+    gap: 12px;
+  }
+
+  .page-header__title {
+    font-size: 18px;
+  }
+
+  .page-header__desc {
+    max-width: none;
+  }
+
+  .page-header__actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .page-header__actions .el-button {
+    min-height: 40px;
+  }
+
+  .surface-pad {
+    padding: 14px 14px;
+  }
+
+  .metric {
+    padding: 14px 16px;
+  }
+
+  .metric__value {
+    font-size: 22px;
   }
 
   .table-toolbar__left {
@@ -337,5 +377,10 @@ p {
     max-width: none;
     width: 100% !important;
     flex: 1 1 100%;
+  }
+
+  .el-tabs__item {
+    padding: 0 14px;
+    font-size: 14px;
   }
 }

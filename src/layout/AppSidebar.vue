@@ -11,8 +11,8 @@
         class="brand-mark"
         src="/logo_white.png"
         alt="Blacnova"
-        width="32"
-        height="32"
+        width="28"
+        height="28"
       />
       <div v-show="showLabels" class="brand-text">
         <div class="brand-name">Blacnova</div>
@@ -25,7 +25,7 @@
         aria-label="Close menu"
         @click="clientStore.setMobileNav(false)"
       >
-        <PhX :size="18" />
+        <PhX :size="20" />
       </button>
     </div>
 
@@ -42,7 +42,7 @@
           class="nav-item"
           :title="showLabels ? undefined : item.label"
         >
-          <component :is="iconMap[item.icon]" :size="20" weight="regular" class="nav-item__icon" />
+          <component :is="iconMap[item.icon]" :size="18" weight="regular" class="nav-item__icon" />
           <span v-show="showLabels" class="nav-item__label">{{ item.label }}</span>
           <span
             v-if="item.key === 'submissions' && websiteStore.newSubmissionCount && showLabels"
@@ -53,12 +53,6 @@
         </router-link>
       </template>
     </nav>
-
-    <div v-show="showLabels" class="sidebar__site">
-      <div class="site-label">Current website</div>
-      <div class="site-name">{{ clientStore.client.name }}</div>
-      <div class="site-domain">{{ clientStore.client.domain }}</div>
-    </div>
   </aside>
 </template>
 
@@ -78,8 +72,8 @@ import {
   PhUsers,
   PhCurrencyDollar,
   PhReceipt,
-  PhLifebuoy,
   PhChartLineUp,
+  PhLifebuoy,
 } from '@phosphor-icons/vue'
 import { useClientStore } from '@/stores/client'
 import { useWebsiteStore } from '@/stores/website'
@@ -109,8 +103,8 @@ const iconMap: Record<string, object> = {
   Users: PhUsers,
   CurrencyDollar: PhCurrencyDollar,
   Receipt: PhReceipt,
-  Lifebuoy: PhLifebuoy,
   ChartLineUp: PhChartLineUp,
+  Lifebuoy: PhLifebuoy,
 }
 </script>
 
@@ -128,27 +122,28 @@ const iconMap: Record<string, object> = {
   z-index: 100;
   transition: width 0.2s ease, transform 0.2s ease;
   color: rgba(255, 255, 255, 0.85);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .sidebar.is-collapsed {
-  width: 72px;
+  width: $bn-sidebar-collapsed;
 }
 
 .sidebar__brand {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 12px;
+  gap: 10px;
   height: $bn-header-height;
-  padding: 0 18px;
+  padding: 0 14px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   flex-shrink: 0;
   position: relative;
 }
 
 .brand-mark {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   border-radius: 6px;
   object-fit: contain;
   flex-shrink: 0;
@@ -160,7 +155,7 @@ const iconMap: Record<string, object> = {
 }
 
 .brand-name {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: $bn-white;
   line-height: 1.2;
@@ -174,19 +169,22 @@ const iconMap: Record<string, object> = {
 
 .sidebar__close {
   margin-left: auto;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border: none;
   border-radius: $bn-radius-sm;
-  background: transparent;
-  color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.08);
+  color: $bn-white;
   display: grid;
   place-items: center;
   cursor: pointer;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .sidebar__close:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.14);
   color: $bn-white;
 }
 
@@ -194,16 +192,17 @@ const iconMap: Record<string, object> = {
   display: flex;
   flex-direction: column;
   gap: 1px;
-  padding: 14px 10px;
+  padding: 10px 8px;
   flex: 1;
   overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .nav-divider {
-  margin: 12px 8px 6px;
-  padding-top: 10px;
+  margin: 8px 6px 4px;
+  padding-top: 8px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -215,11 +214,11 @@ const iconMap: Record<string, object> = {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 12px;
+  padding: 7px 10px;
   border-radius: $bn-radius-sm;
   color: rgba(255, 255, 255, 0.55);
   transition: background 0.12s ease, color 0.12s ease;
-  min-height: 44px;
+  min-height: 36px;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
@@ -232,20 +231,14 @@ const iconMap: Record<string, object> = {
 }
 
 .nav-item.router-link-active {
-  background: rgba(255, 255, 255, 0.08);
+  background: $bn-orange;
   color: $bn-white;
   font-weight: 500;
 }
 
-.nav-item.router-link-active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 8px;
-  bottom: 8px;
-  width: 4px;
-  border-radius: 1px;
-  background: $bn-orange;
+.nav-item.router-link-active:hover {
+  background: $bn-orange-hover;
+  color: $bn-white;
 }
 
 .nav-item.router-link-active .nav-item__icon {
@@ -259,7 +252,7 @@ const iconMap: Record<string, object> = {
 
 .nav-item__label {
   flex: 1;
-  font-size: 13.5px;
+  font-size: 13px;
 }
 
 .nav-item__badge {
@@ -276,52 +269,29 @@ const iconMap: Record<string, object> = {
   justify-content: center;
 }
 
+.nav-item.router-link-active .nav-item__badge {
+  background: $bn-white;
+  color: $bn-orange;
+}
+
 .sidebar.is-collapsed .nav-item {
   justify-content: center;
-  padding: 10px;
+  padding: 8px;
 }
 
-.sidebar.is-collapsed .nav-item.router-link-active::before {
-  display: none;
-}
-
-.sidebar__site {
-  margin: 0 12px 16px;
-  padding: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.site-label {
-  font-size: 11px;
-  color: rgba(255, 255, 255, 0.4);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-bottom: 6px;
-}
-
-.site-name {
-  font-size: 13px;
-  font-weight: 500;
-  color: $bn-white;
-}
-
-.site-domain {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.5);
-  margin-top: 2px;
-  word-break: break-all;
-}
-
-@media (max-width: 900px) {
+@media (max-width: $bn-bp-mobile) {
   .sidebar {
     transform: translateX(-100%);
-    width: min(288px, 86vw) !important;
-    box-shadow: 8px 0 32px rgba(0, 0, 0, 0.45);
+    width: 100% !important;
+    max-width: 100%;
+    border-right: none;
+    box-shadow: none;
     pointer-events: none;
+    z-index: 120;
   }
 
   .sidebar.is-collapsed {
-    width: min(288px, 86vw) !important;
+    width: 100% !important;
   }
 
   .sidebar.is-open {
@@ -329,13 +299,31 @@ const iconMap: Record<string, object> = {
     pointer-events: auto;
   }
 
-  .sidebar.is-open .nav-item {
-    justify-content: flex-start;
-    padding: 10px 12px;
+  .sidebar__brand {
+    padding: 0 16px;
+    padding-top: env(safe-area-inset-top);
+    height: calc(56px + env(safe-area-inset-top));
   }
 
-  .sidebar.is-open .nav-item.router-link-active::before {
-    display: block;
+  .sidebar__nav {
+    padding: 12px 12px 24px;
+    gap: 2px;
+  }
+
+  .nav-item {
+    justify-content: flex-start;
+    padding: 12px 14px;
+    min-height: 48px;
+    border-radius: 8px;
+  }
+
+  .nav-item__label {
+    font-size: 15px;
+  }
+
+  .nav-divider {
+    margin: 14px 8px 8px;
+    font-size: 11px;
   }
 }
 </style>

@@ -54,15 +54,29 @@ function onResize() {
   }
 }
 
-onMounted(() => window.addEventListener('resize', onResize, { passive: true }))
-onUnmounted(() => window.removeEventListener('resize', onResize))
+function onKeydown(event: KeyboardEvent) {
+  if (event.key === 'Escape' && clientStore.mobileNavOpen) {
+    clientStore.setMobileNav(false)
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('resize', onResize, { passive: true })
+  window.addEventListener('keydown', onKeydown)
+})
+onUnmounted(() => {
+  window.removeEventListener('resize', onResize)
+  window.removeEventListener('keydown', onKeydown)
+})
 </script>
 
 <style scoped lang="scss">
 .app-layout {
   display: flex;
   min-height: 100vh;
+  min-height: 100dvh;
   background: $bn-gray-50;
+  overflow-x: clip;
 }
 
 .sidebar-backdrop {
@@ -83,12 +97,13 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
 }
 
 .is-collapsed .app-main {
-  margin-left: 72px;
+  margin-left: $bn-sidebar-collapsed;
 }
 
 .app-content {
   flex: 1;
-  padding: 22px 28px 48px;
+  padding: 20px 24px 40px;
+  padding-bottom: max(40px, env(safe-area-inset-bottom));
 }
 
 .fade-enter-active,
@@ -101,17 +116,20 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
   opacity: 0;
 }
 
-@media (max-width: 900px) {
+@media (max-width: $bn-bp-mobile) {
   .app-main {
     margin-left: 0 !important;
   }
 
   .sidebar-backdrop {
-    display: block;
+    display: none;
   }
 
   .app-content {
-    padding: 16px 16px 32px;
+    padding: 14px 14px 28px;
+    padding-left: max(14px, env(safe-area-inset-left));
+    padding-right: max(14px, env(safe-area-inset-right));
+    padding-bottom: max(28px, env(safe-area-inset-bottom));
   }
 
   /* Avoid out-in stalls feeling like dead clicks on mobile. */

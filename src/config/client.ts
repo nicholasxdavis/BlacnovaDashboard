@@ -45,9 +45,12 @@ export function getNavForClient(
 ): NavItem[] {
   const clientItems = CLIENT_NAV.filter((item) => modules.includes(item.key))
   if (!isPlatform) return clientItems
-  const ownerItems = OWNER_NAV.filter(
-    (item) => item.key !== 'finance' || canAccessFinance,
-  )
+  const ownerItems = OWNER_NAV.filter((item) => {
+    if (item.key === 'finance') return canAccessFinance
+    // Finance owner sees invoices inside Finance, not as a duplicate nav item.
+    if (item.key === 'invoices' && canAccessFinance) return false
+    return true
+  })
   return [...clientItems, ...ownerItems]
 }
 

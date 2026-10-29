@@ -307,7 +307,8 @@ function formatDate(value: string) {
 }
 
 .sub-row:hover .sub-row__name {
-  color: $bn-orange;
+  color: $bn-black;
+  text-decoration: underline;
 }
 
 .sub-row__name {
@@ -375,9 +376,21 @@ function formatDate(value: string) {
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: $bn-bp-mobile) {
   .maint-banner {
     flex-wrap: wrap;
+  }
+
+  .sub-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .sub-row__meta {
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
   }
 }
 </style>

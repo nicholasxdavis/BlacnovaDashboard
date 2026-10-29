@@ -170,7 +170,7 @@ const active = ref<AdminClient | null>(null)
 const form = reactive({ name: '', domain: '', githubRepo: '' })
 const billingForm = reactive({ enabled: false, amount: 99, name: '', email: '' })
 const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1024)
-const drawerSize = computed(() => (windowWidth.value < 640 ? '100%' : '420px'))
+const drawerSize = computed(() => (windowWidth.value <= 900 ? '100%' : '420px'))
 
 function onResize() {
   windowWidth.value = window.innerWidth

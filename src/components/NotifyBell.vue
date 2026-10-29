@@ -204,7 +204,7 @@ onMounted(() => {
 }
 
 .notify__action:hover {
-  color: $bn-orange;
+  color: $bn-black;
 }
 
 .notify__list {

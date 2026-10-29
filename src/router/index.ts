@@ -150,6 +150,10 @@ router.beforeEach(async (to) => {
       return { path: '/login', query: { redirect: to.fullPath } }
     }
 
+    if (to.path === '/invoices' && auth.canAccessFinance) {
+      return { path: '/finance', query: { tab: 'invoices' } }
+    }
+
     const websiteStore = useWebsiteStore()
     if (!websiteStore.loaded) {
       try {

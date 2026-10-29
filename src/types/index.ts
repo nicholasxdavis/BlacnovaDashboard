@@ -225,6 +225,26 @@ export interface PortalNotification {
   createdAt: string
 }
 
+export interface InvoiceSummary {
+  billedCents: number
+  billedFormatted: string
+  paidCents: number
+  paidFormatted: string
+  paidCount: number
+  openCents: number
+  openFormatted: string
+  openCount: number
+  invoiceCount: number
+  recurringMonthlyCents: number
+  recurringMonthlyFormatted: string
+  recurringActive: number
+  retainerMonthlyCents: number
+  retainerMonthlyFormatted: string
+  retainerClients: number
+  expectedMonthlyCents: number
+  expectedMonthlyFormatted: string
+}
+
 export interface RecurringInvoice {
   id: string
   websiteId: string | null

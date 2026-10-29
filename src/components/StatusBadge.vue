@@ -71,8 +71,8 @@ const dot = computed(() => props.status === 'new')
 
 .status-badge--ok {
   color: $bn-white;
-  background: $bn-orange;
-  border-color: $bn-orange;
+  background: $bn-black;
+  border-color: $bn-black;
 }
 
 .status-badge--read {

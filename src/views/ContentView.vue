@@ -245,6 +245,13 @@ async function publish() {
   padding: 20px;
 }
 
+@media (max-width: $bn-bp-mobile) {
+  .content-group__head,
+  .content-group__body {
+    padding: 14px;
+  }
+}
+
 .field-top {
   display: flex;
   align-items: center;
@@ -277,8 +284,8 @@ async function publish() {
 
 .pub-pill--on {
   color: $bn-white;
-  background: $bn-orange;
-  border-color: $bn-orange;
+  background: $bn-black;
+  border-color: $bn-black;
 }
 
 .pub-pill--off {
