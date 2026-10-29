@@ -62,7 +62,11 @@
           <label class="field-label">Email</label>
           <el-input v-model="createForm.email" type="email" />
         </div>
-        <div>
+        <label class="check-row">
+          <el-switch v-model="createForm.sendWelcome" />
+          <span>Email welcome with a temporary password</span>
+        </label>
+        <div v-if="!createForm.sendWelcome">
           <label class="field-label">Temporary password</label>
           <el-input v-model="createForm.password" type="password" show-password />
         </div>
@@ -127,6 +131,7 @@ const createForm = reactive({
   password: '',
   websiteId: '',
   role: 'manager',
+  sendWelcome: true,
 })
 
 async function load() {
@@ -151,23 +156,35 @@ function openCreate() {
   createForm.password = ''
   createForm.websiteId = clients.value[0]?.id || ''
   createForm.role = 'manager'
+  createForm.sendWelcome = true
   createOpen.value = true
 }
 
 async function createAccount() {
-  if (!createForm.name || !createForm.email || !createForm.password || !createForm.websiteId) {
-    ElMessage.error('Fill in all fields')
+  if (!createForm.name || !createForm.email || !createForm.websiteId) {
+    ElMessage.error('Name, email, and website are required')
     return
   }
-  if (createForm.password.length < 12) {
+  if (!createForm.sendWelcome && createForm.password.length < 12) {
     ElMessage.error('Password must be at least 12 characters')
     return
   }
   saving.value = true
   try {
-    await api.post('/v1/admin/accounts', { ...createForm })
+    const { data } = await api.post('/v1/admin/accounts', {
+      name: createForm.name,
+      email: createForm.email,
+      websiteId: createForm.websiteId,
+      role: createForm.role,
+      sendWelcome: createForm.sendWelcome,
+      password: createForm.sendWelcome ? undefined : createForm.password,
+    })
     createOpen.value = false
-    ElMessage.success('Account created')
+    if (data.welcomeSent === false) {
+      ElMessage.warning('Account created, but the welcome email did not send')
+    } else {
+      ElMessage.success(createForm.sendWelcome ? 'Account created and welcome emailed' : 'Account created')
+    }
     await load()
   } catch (err: unknown) {
     const message =
@@ -239,5 +256,14 @@ onMounted(load)
 .muted {
   font-size: 12px;
   color: $bn-gray-500;
+}
+
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: $bn-gray-700;
+  cursor: pointer;
 }
 </style>

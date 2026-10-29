@@ -6,7 +6,7 @@
     >
       <template #actions>
         <el-button :loading="publishing" @click="publishSite">Publish to site</el-button>
-        <el-button type="primary" @click="router.push('/content')">Edit content</el-button>
+        <el-button type="primary" @click="router.push('/submissions')">View submissions</el-button>
       </template>
     </PageHeader>
 
@@ -40,9 +40,9 @@
         trend="flat"
       />
       <MetricCard
-        label="Published pages"
-        :value="websiteStore.publishedPageCount"
-        :delta="`${websiteStore.pages.length} total pages`"
+        label="Site"
+        :value="websiteStore.maintenance.enabled ? 'Maintenance' : 'Live'"
+        :delta="clientStore.client.domain"
         trend="flat"
       />
     </div>
@@ -113,14 +113,14 @@
         <div class="status-value">{{ clientStore.client.domain }}</div>
       </div>
       <div class="status-item">
-        <div class="status-label">Draft content</div>
+        <div class="status-label">Form inbox</div>
         <div class="status-value">
-          {{ draftContentCount }} unpublished block{{ draftContentCount === 1 ? '' : 's' }}
+          {{ websiteStore.submissions.length }} submission{{ websiteStore.submissions.length === 1 ? '' : 's' }}
         </div>
       </div>
       <div class="status-item">
-        <div class="status-label">Media library</div>
-        <div class="status-value">{{ websiteStore.media.length }} files</div>
+        <div class="status-label">Traffic history</div>
+        <div class="status-value">{{ websiteStore.analytics.length }} weeks recorded</div>
       </div>
     </div>
   </div>
@@ -153,10 +153,6 @@ const latest = computed(
       pageviews: 0,
       submissions: 0,
     },
-)
-
-const draftContentCount = computed(
-  () => websiteStore.content.filter((c) => !c.published).length,
 )
 
 const recentSubmissions = computed(() =>

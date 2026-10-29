@@ -60,9 +60,6 @@
 import { computed } from 'vue'
 import {
   PhHouse,
-  PhTextT,
-  PhImage,
-  PhFiles,
   PhWrench,
   PhEnvelopeSimple,
   PhChartLine,
@@ -92,9 +89,6 @@ const isIconRail = computed(
 
 const iconMap: Record<string, object> = {
   House: PhHouse,
-  TextT: PhTextT,
-  Image: PhImage,
-  Files: PhFiles,
   Wrench: PhWrench,
   EnvelopeSimple: PhEnvelopeSimple,
   ChartLine: PhChartLine,

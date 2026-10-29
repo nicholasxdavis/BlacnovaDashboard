@@ -2,7 +2,7 @@
   <div class="page">
     <PageHeader
       title="Clients"
-      description="Websites and client portals managed by Blacnova. Set monthly billing per client."
+      description="Websites and client portals managed by Blacnova. Send intake links, open billing, or create dashboard logins."
     >
       <template #actions>
         <el-button type="primary" @click="openCreate">Add client</el-button>
@@ -49,18 +49,28 @@
           </template>
         </el-table-column>
         <el-table-column prop="accountCount" label="Accounts" width="90" align="center" />
-        <el-table-column label="" width="168" align="right" fixed="right">
+        <el-table-column label="" width="56" align="right" fixed="right">
           <template #default="{ row }">
-            <div class="table-actions">
-              <el-button text @click="openBilling(row)">Billing</el-button>
-              <el-button text type="danger" @click="removeClient(row)">Delete</el-button>
-            </div>
+            <el-dropdown trigger="click" @command="(cmd: string) => onClientMenu(cmd, row)">
+              <button class="row-menu-btn" type="button" aria-label="Client actions" @click.stop>
+                <PhDotsThreeVertical :size="18" />
+              </button>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item command="intake">Send intake</el-dropdown-item>
+                  <el-dropdown-item command="copy-intake">Copy intake link</el-dropdown-item>
+                  <el-dropdown-item command="dashboard">Create dashboard login</el-dropdown-item>
+                  <el-dropdown-item command="billing">Billing</el-dropdown-item>
+                  <el-dropdown-item divided command="delete">Delete</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </template>
         </el-table-column>
       </el-table>
     </div>
 
-    <el-dialog v-model="dialogOpen" title="Add client website" width="440px" class="bn-dialog" destroy-on-close>
+    <el-dialog v-model="dialogOpen" title="Add client website" width="460px" class="bn-dialog" destroy-on-close>
       <div class="ticket-form">
         <div>
           <label class="field-label">Name</label>
@@ -71,13 +81,74 @@
           <el-input v-model="form.domain" placeholder="www.acme.com" />
         </div>
         <div>
+          <label class="field-label">Contact email</label>
+          <el-input v-model="form.contactEmail" type="email" placeholder="hello@acme.com" />
+        </div>
+        <div>
           <label class="field-label">GitHub repo (optional)</label>
           <el-input v-model="form.githubRepo" placeholder="org/repo" />
         </div>
+        <label class="check-row">
+          <el-switch v-model="form.sendIntake" />
+          <span>Send website intake link</span>
+        </label>
+        <label class="check-row">
+          <el-switch v-model="form.createDashboard" />
+          <span>Create dashboard login and email welcome</span>
+        </label>
       </div>
       <template #footer>
         <el-button @click="dialogOpen = false">Cancel</el-button>
         <el-button type="primary" :loading="saving" @click="createClient">Create</el-button>
+      </template>
+    </el-dialog>
+
+    <el-dialog v-model="intakeOpen" title="Send intake" width="420px" destroy-on-close>
+      <p class="section__desc" style="margin-bottom: 12px">
+        Email a Blacnova intake form for
+        <strong>{{ active?.name }}</strong>.
+      </p>
+      <div class="ticket-form">
+        <div>
+          <label class="field-label">Email</label>
+          <el-input v-model="intakeForm.email" type="email" placeholder="client@email.com" />
+        </div>
+        <div>
+          <label class="field-label">Name (optional)</label>
+          <el-input v-model="intakeForm.name" />
+        </div>
+      </div>
+      <template #footer>
+        <el-button @click="intakeOpen = false">Cancel</el-button>
+        <el-button type="primary" :loading="saving" @click="sendIntake">Send intake</el-button>
+      </template>
+    </el-dialog>
+
+    <el-dialog v-model="accountOpen" title="Create dashboard login" width="420px" destroy-on-close>
+      <p class="section__desc" style="margin-bottom: 12px">
+        Create a portal login for <strong>{{ active?.name }}</strong>.
+      </p>
+      <div class="ticket-form">
+        <div>
+          <label class="field-label">Name</label>
+          <el-input v-model="accountForm.name" />
+        </div>
+        <div>
+          <label class="field-label">Email</label>
+          <el-input v-model="accountForm.email" type="email" />
+        </div>
+        <label class="check-row">
+          <el-switch v-model="accountForm.sendWelcome" />
+          <span>Email welcome with a temporary password</span>
+        </label>
+        <div v-if="!accountForm.sendWelcome">
+          <label class="field-label">Temporary password</label>
+          <el-input v-model="accountForm.password" type="password" show-password />
+        </div>
+      </div>
+      <template #footer>
+        <el-button @click="accountOpen = false">Cancel</el-button>
+        <el-button type="primary" :loading="saving" @click="createDashboardLogin">Create</el-button>
       </template>
     </el-dialog>
 
@@ -154,20 +225,33 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, reactive, ref } from 'vue'
+import { PhDotsThreeVertical } from '@phosphor-icons/vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import PageHeader from '@/components/PageHeader.vue'
 import { api } from '@/lib/api'
+import { clientIntakeUrl } from '@/lib/intake'
 import type { AdminClient } from '@/types'
 
 const clients = ref<AdminClient[]>([])
 const loading = ref(false)
 const dialogOpen = ref(false)
 const billingOpen = ref(false)
+const intakeOpen = ref(false)
+const accountOpen = ref(false)
 const saving = ref(false)
 const restoring = ref(false)
 const billingNow = ref(false)
 const active = ref<AdminClient | null>(null)
-const form = reactive({ name: '', domain: '', githubRepo: '' })
+const form = reactive({
+  name: '',
+  domain: '',
+  githubRepo: '',
+  contactEmail: '',
+  sendIntake: true,
+  createDashboard: false,
+})
+const intakeForm = reactive({ email: '', name: '' })
+const accountForm = reactive({ name: '', email: '', password: '', sendWelcome: true })
 const billingForm = reactive({ enabled: false, amount: 99, name: '', email: '' })
 const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1024)
 const drawerSize = computed(() => (windowWidth.value <= 900 ? '100%' : '420px'))
@@ -192,7 +276,111 @@ function openCreate() {
   form.name = ''
   form.domain = ''
   form.githubRepo = ''
+  form.contactEmail = ''
+  form.sendIntake = true
+  form.createDashboard = false
   dialogOpen.value = true
+}
+
+function onClientMenu(command: string, row: AdminClient) {
+  if (command === 'intake') {
+    active.value = row
+    intakeForm.email = row.billingEmail || ''
+    intakeForm.name = row.billingName || row.name
+    intakeOpen.value = true
+    return
+  }
+  if (command === 'copy-intake') {
+    void copyIntake(row)
+    return
+  }
+  if (command === 'dashboard') {
+    active.value = row
+    accountForm.name = row.billingName || row.name
+    accountForm.email = row.billingEmail || ''
+    accountForm.password = ''
+    accountForm.sendWelcome = true
+    accountOpen.value = true
+    return
+  }
+  if (command === 'billing') {
+    openBilling(row)
+    return
+  }
+  if (command === 'delete') {
+    void removeClient(row)
+  }
+}
+
+async function copyIntake(row: AdminClient) {
+  try {
+    await navigator.clipboard.writeText(clientIntakeUrl(row.name))
+    ElMessage.success('Intake link copied')
+  } catch {
+    ElMessage.error('Could not copy link')
+  }
+}
+
+async function sendIntake() {
+  if (!active.value) return
+  if (!intakeForm.email.trim()) {
+    ElMessage.error('Email is required')
+    return
+  }
+  saving.value = true
+  try {
+    await api.post(`/v1/admin/clients/${active.value.id}/send-intake`, {
+      email: intakeForm.email.trim().toLowerCase(),
+      name: intakeForm.name.trim() || undefined,
+    })
+    intakeOpen.value = false
+    ElMessage.success('Intake emailed')
+    await load()
+  } catch (err: unknown) {
+    const message =
+      (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
+      'Could not send intake'
+    ElMessage.error(message)
+  } finally {
+    saving.value = false
+  }
+}
+
+async function createDashboardLogin() {
+  if (!active.value) return
+  if (!accountForm.name.trim() || !accountForm.email.trim()) {
+    ElMessage.error('Name and email are required')
+    return
+  }
+  if (!accountForm.sendWelcome && accountForm.password.length < 12) {
+    ElMessage.error('Password must be at least 12 characters')
+    return
+  }
+  saving.value = true
+  try {
+    const { data } = await api.post('/v1/admin/accounts', {
+      name: accountForm.name.trim(),
+      email: accountForm.email.trim().toLowerCase(),
+      websiteId: active.value.id,
+      role: 'manager',
+      sendWelcome: accountForm.sendWelcome,
+      password: accountForm.sendWelcome ? undefined : accountForm.password,
+    })
+    accountOpen.value = false
+    if (data.welcomeSent === false) {
+      ElMessage.warning('Account created, but the welcome email did not send')
+    } else {
+      ElMessage.success(accountForm.sendWelcome ? 'Account created and welcome emailed' : 'Account created')
+    }
+    await load()
+  } catch (err: unknown) {
+    const message =
+      (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
+      'Could not create account'
+    ElMessage.error(message)
+  } finally {
+    saving.value = false
+  }
 }
 
 function openBilling(row: AdminClient) {
@@ -282,15 +470,29 @@ async function createClient() {
     ElMessage.error('Name and domain are required')
     return
   }
+  if ((form.sendIntake || form.createDashboard) && !form.contactEmail.trim()) {
+    ElMessage.error('Contact email is required to send intake or create a dashboard login')
+    return
+  }
   saving.value = true
   try {
-    await api.post('/v1/admin/clients', {
+    const { data } = await api.post('/v1/admin/clients', {
       name: form.name.trim(),
       domain: form.domain.trim().toLowerCase(),
       githubRepo: form.githubRepo.trim() || undefined,
+      contactEmail: form.contactEmail.trim() || undefined,
+      sendIntake: form.sendIntake,
+      createDashboard: form.createDashboard,
+      sendWelcome: form.createDashboard,
     })
     dialogOpen.value = false
-    ElMessage.success('Client created')
+    if (form.sendIntake && data.intakeSent === false) {
+      ElMessage.warning('Client created, but the intake email did not send')
+    } else if (form.createDashboard && data.welcomeSent === false) {
+      ElMessage.warning('Client created, but the welcome email did not send')
+    } else {
+      ElMessage.success('Client created')
+    }
     await load()
   } catch (err: unknown) {
     const message =
@@ -353,6 +555,32 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
     width: 100%;
     max-width: 140px;
   }
+}
+
+.row-menu-btn {
+  border: none;
+  background: transparent;
+  width: 32px;
+  height: 32px;
+  border-radius: $bn-radius-sm;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: $bn-gray-700;
+}
+
+.row-menu-btn:hover {
+  background: $bn-gray-100;
+  color: $bn-black;
+}
+
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: $bn-gray-700;
+  cursor: pointer;
 }
 
 .muted {

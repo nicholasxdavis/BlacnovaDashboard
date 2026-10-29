@@ -28,24 +28,9 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/views/OverviewView.vue'),
         meta: { module: 'overview' as ModuleKey, title: 'Overview' },
       },
-      {
-        path: 'content',
-        name: 'Content',
-        component: () => import('@/views/ContentView.vue'),
-        meta: { module: 'content' as ModuleKey, title: 'Content' },
-      },
-      {
-        path: 'media',
-        name: 'Media',
-        component: () => import('@/views/MediaView.vue'),
-        meta: { module: 'media' as ModuleKey, title: 'Media' },
-      },
-      {
-        path: 'pages',
-        name: 'Pages',
-        component: () => import('@/views/PagesView.vue'),
-        meta: { module: 'pages' as ModuleKey, title: 'Pages' },
-      },
+      { path: 'content', redirect: '/overview' },
+      { path: 'media', redirect: '/overview' },
+      { path: 'pages', redirect: '/overview' },
       {
         path: 'maintenance',
         name: 'Maintenance',
