@@ -30,6 +30,7 @@ export interface ClientWebsite {
   domain: string
   status: 'live' | 'maintenance' | 'offline'
   modules: ModuleKey[]
+  githubRepo?: string | null
 }
 
 export interface ContentBlock {

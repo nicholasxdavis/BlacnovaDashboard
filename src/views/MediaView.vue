@@ -2,7 +2,7 @@
   <div class="page">
     <PageHeader
       title="Media"
-      description="Images used on your site, including client logos, project screenshots, and brand assets. Replace a file here to update the live website."
+      description="Replace pallet card photos and other site images here. Keep the file name the same (for example pallet-1.jpg) so the live site swaps automatically."
     >
       <template #actions>
         <el-button type="primary" @click="openUpload()">

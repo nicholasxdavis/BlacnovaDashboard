@@ -2,6 +2,8 @@ import type { ClientWebsite, ModuleKey, NavItem } from '@/types'
 
 export const CLIENT_NAV: NavItem[] = [
   { key: 'overview', label: 'Overview', path: '/overview', icon: 'House' },
+  { key: 'content', label: 'Content', path: '/content', icon: 'TextT' },
+  { key: 'media', label: 'Media', path: '/media', icon: 'Image' },
   { key: 'maintenance', label: 'Maintenance', path: '/maintenance', icon: 'Wrench' },
   { key: 'submissions', label: 'Submissions', path: '/submissions', icon: 'EnvelopeSimple' },
   { key: 'analytics', label: 'Analytics', path: '/analytics', icon: 'ChartLine' },
@@ -58,7 +60,7 @@ export function hasModule(
   canAccessFinance = false,
 ): boolean {
   if (key === 'finance') return canAccessFinance
-  if (key === 'content' || key === 'media' || key === 'pages') return false
+  if (key === 'pages') return false
   if (OWNER_NAV.some((n) => n.key === key)) return isPlatform
   return modules.includes(key)
 }

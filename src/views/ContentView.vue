@@ -2,7 +2,7 @@
   <div class="page">
     <PageHeader
       title="Content"
-      description="Edit website text by page and section. Changes stay unpublished until you save them."
+      description="Edit website text by page and section. Saving published copy updates the live site right away."
     >
       <template #actions>
         <span v-if="dirty" class="unsaved-pill">
@@ -13,7 +13,7 @@
         <el-button type="primary" :disabled="!dirty" :loading="saving" @click="save">
           Save changes
         </el-button>
-        <el-button :loading="publishing" @click="publish">
+        <el-button v-if="canPublishGithub" :loading="publishing" @click="publish">
           Publish to site
         </el-button>
       </template>
@@ -101,11 +101,14 @@ import { PhCircle } from '@phosphor-icons/vue'
 import { ElMessage } from 'element-plus'
 import PageHeader from '@/components/PageHeader.vue'
 import EmptyState from '@/components/EmptyState.vue'
+import { useAuthStore } from '@/stores/auth'
 import { useWebsiteStore } from '@/stores/website'
 import { useUnsavedGuard } from '@/composables/useUnsavedGuard'
 
 const route = useRoute()
+const auth = useAuthStore()
 const websiteStore = useWebsiteStore()
+const canPublishGithub = computed(() => Boolean(auth.website?.githubRepo))
 const search = ref('')
 const pageFilter = ref<string | undefined>(
   typeof route.query.page === 'string' ? route.query.page : undefined,

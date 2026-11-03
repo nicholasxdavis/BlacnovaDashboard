@@ -77,6 +77,7 @@ export const useAuthStore = defineStore('auth', () => {
       domain: payload.website.domain,
       status: payload.website.status,
       modules: payload.website.modules,
+      githubRepo: payload.website.githubRepo ?? null,
     }
   }
 
