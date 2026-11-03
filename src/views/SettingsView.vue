@@ -68,7 +68,7 @@
           <label class="pref-row">
             <div>
               <div class="pref-title">New form submissions</div>
-              <div class="pref-hint">Show a badge and notification when someone submits a form</div>
+              <div class="pref-hint">Email you and show a dashboard alert when someone submits a quote or contact form</div>
             </div>
             <el-switch v-model="prefs.submissions" @change="savePrefs" />
           </label>
