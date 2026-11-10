@@ -108,7 +108,7 @@ import { useUnsavedGuard } from '@/composables/useUnsavedGuard'
 const route = useRoute()
 const auth = useAuthStore()
 const websiteStore = useWebsiteStore()
-const canPublishGithub = computed(() => Boolean(auth.website?.githubRepo))
+const canPublishGithub = computed(() => Boolean(auth.website?.githubPublishEnabled))
 const search = ref('')
 const pageFilter = ref<string | undefined>(
   typeof route.query.page === 'string' ? route.query.page : undefined,

@@ -31,6 +31,7 @@ export interface ClientWebsite {
   status: 'live' | 'maintenance' | 'offline'
   modules: ModuleKey[]
   githubRepo?: string | null
+  githubPublishEnabled?: boolean
 }
 
 export interface ContentBlock {

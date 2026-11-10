@@ -5,8 +5,10 @@ const API_BASE =
   'https://blacnova-api.nic-58f.workers.dev'
 
 const TOKEN_KEY = 'bn-auth-token'
+let memoryToken: string | null | undefined
 
 export function getToken(): string | null {
+  if (memoryToken !== undefined) return memoryToken
   try {
     return localStorage.getItem(TOKEN_KEY)
   } catch {
@@ -18,9 +20,16 @@ export function setToken(token: string | null) {
   try {
     if (token) localStorage.setItem(TOKEN_KEY, token)
     else localStorage.removeItem(TOKEN_KEY)
+    memoryToken = undefined
   } catch {
-    /* private mode / blocked storage */
+    memoryToken = token
   }
+}
+
+export function dashboardReturnPath(value: unknown): string {
+  return typeof value === 'string' && /^\/(?![/\\])/.test(value) && !value.includes('\\')
+    ? value
+    : '/overview'
 }
 
 export const api = axios.create({
@@ -46,9 +55,9 @@ api.interceptors.response.use(
     const status = err.response?.status
     const url = String(err.config?.url || '')
     const onLogin = window.location.pathname === '/login'
-    const isAuthCall = url.includes('/v1/auth/login') || url.includes('/v1/auth/me')
+    const handledByRouter = ['/v1/auth/login', '/v1/auth/me', '/v1/dashboard'].includes(url)
 
-    if (status === 401 && !onLogin && !isAuthCall) {
+    if (status === 401 && !onLogin && !handledByRouter) {
       setToken(null)
       const redirect = encodeURIComponent(window.location.pathname + window.location.search)
       window.location.href = `/login?redirect=${redirect}`

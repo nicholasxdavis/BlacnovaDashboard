@@ -99,7 +99,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/auth'
 import { useWebsiteStore } from '@/stores/website'
-import { api } from '@/lib/api'
+import { api, dashboardReturnPath } from '@/lib/api'
 
 const router = useRouter()
 const route = useRoute()
@@ -116,8 +116,11 @@ const passwordError = ref('')
 const supportEmail = ref('')
 
 onMounted(async () => {
-  const remembered = localStorage.getItem('bn-remember-email')
-  if (remembered) email.value = remembered
+  try {
+    email.value = localStorage.getItem('bn-remember-email') || ''
+  } catch {
+    /* Remembering the email is optional. */
+  }
   try {
     const { data } = await api.get('/v1/public/meta')
     if (data?.supportEmail) supportEmail.value = String(data.supportEmail)
@@ -144,18 +147,18 @@ async function onSubmit() {
   loading.value = true
   try {
     await auth.login(email.value.trim(), password.value)
-    if (rememberMe.value) {
-      localStorage.setItem('bn-remember-email', email.value.trim())
-    } else {
-      localStorage.removeItem('bn-remember-email')
+    websiteStore.clear()
+    try {
+      if (rememberMe.value) localStorage.setItem('bn-remember-email', email.value.trim())
+      else localStorage.removeItem('bn-remember-email')
+    } catch {
+      /* Remembering the email is optional. */
     }
-    await websiteStore.fetchDashboard()
-    const redirect = typeof route.query.redirect === 'string' ? route.query.redirect : '/overview'
-    await router.push(redirect)
+    await router.replace(dashboardReturnPath(route.query.redirect))
   } catch (err: unknown) {
     const message =
       (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
-      'Invalid email or password'
+      'Sign-in is temporarily unavailable. Please try again.'
     ElMessage.error(message)
   } finally {
     loading.value = false

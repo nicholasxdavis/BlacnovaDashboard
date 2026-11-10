@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 import NProgress from 'nprogress'
+import { isAxiosError } from 'axios'
 import 'nprogress/nprogress.css'
 import { useAuthStore } from '@/stores/auth'
 import { useClientStore } from '@/stores/client'
@@ -11,6 +12,12 @@ NProgress.configure({ showSpinner: false, trickleSpeed: 120 })
 const Layout = () => import('@/layout/AppLayout.vue')
 
 const routes: RouteRecordRaw[] = [
+  {
+    path: '/unavailable',
+    name: 'Unavailable',
+    component: () => import('@/views/UnavailableView.vue'),
+    meta: { public: true },
+  },
   {
     path: '/login',
     name: 'Login',
@@ -132,6 +139,8 @@ async function ensureBootstrapped() {
 
 router.beforeEach(async (to) => {
   NProgress.start()
+  if (to.name === 'Unavailable') return true
+
   try {
     const auth = useAuthStore()
     await ensureBootstrapped()
@@ -153,9 +162,12 @@ router.beforeEach(async (to) => {
     if (!websiteStore.loaded) {
       try {
         await websiteStore.fetchDashboard()
-      } catch {
-        await auth.logout()
-        return { path: '/login', query: { redirect: to.fullPath } }
+      } catch (err) {
+        if (isAxiosError(err) && err.response?.status === 401) {
+          auth.clearSession()
+          return { path: '/login', query: { redirect: to.fullPath } }
+        }
+        throw err
       }
     }
 
@@ -167,8 +179,7 @@ router.beforeEach(async (to) => {
     return true
   } catch (err) {
     console.error('Router guard failed', err)
-    NProgress.done()
-    return '/login'
+    return { name: 'Unavailable', query: { redirect: to.fullPath } }
   }
 })
 

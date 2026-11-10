@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
+import { isAxiosError } from 'axios'
 import { api, getToken, setToken } from '@/lib/api'
 import type { ClientWebsite } from '@/types'
 
@@ -78,6 +79,7 @@ export const useAuthStore = defineStore('auth', () => {
       status: payload.website.status,
       modules: payload.website.modules,
       githubRepo: payload.website.githubRepo ?? null,
+      githubPublishEnabled: payload.website.githubPublishEnabled ?? false,
     }
   }
 
@@ -87,16 +89,20 @@ export const useAuthStore = defineStore('auth', () => {
     return data
   }
 
-  async function logout() {
-    try {
-      await api.post('/v1/auth/logout')
-    } catch {
-      /* ignore */
-    }
+  function clearSession() {
     token.value = null
     user.value = null
     website.value = null
     setToken(null)
+  }
+
+  async function logout() {
+    try {
+      await api.post('/v1/auth/logout')
+    } catch {
+      /* The local session must still be cleared. */
+    }
+    clearSession()
   }
 
   async function bootstrap() {
@@ -108,14 +114,15 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       const { data } = await api.get('/v1/auth/me')
       applyAuthPayload(data)
+      bootstrapped.value = true
       return true
-    } catch {
-      token.value = null
-      setToken(null)
+    } catch (err) {
+      if (!isAxiosError(err) || err.response?.status !== 401) throw err
+      clearSession()
+      bootstrapped.value = true
       return false
     } finally {
       loading.value = false
-      bootstrapped.value = true
     }
   }
 
@@ -150,6 +157,7 @@ export const useAuthStore = defineStore('auth', () => {
     initials,
     login,
     logout,
+    clearSession,
     bootstrap,
     changePassword,
     savePreferences,
